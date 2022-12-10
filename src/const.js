@@ -1,6 +1,6 @@
-const TRAVEL_POINTS = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+const TRAVEL_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
-const CITIES = ['New York', 'Berlin', 'Paris', 'Buenos-Aires', 'San-Francisco', 'Mexico', 'Tbilisi'];
+const DESTINATION_CITIES = ['New York', 'Berlin', 'Paris', 'Buenos-Aires', 'San-Francisco', 'Mexico', 'Tbilisi'];
 
 const DESCRIPTIONS_MOCKING = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -16,4 +16,4 @@ const DESCRIPTIONS_MOCKING = [
 
 const PHOTO_LINK = 'https://loremflickr.com/248/152?random=';
 
-export {TRAVEL_POINTS, CITIES, DESCRIPTIONS_MOCKING, PHOTO_LINK};
+export {TRAVEL_TYPES, DESTINATION_CITIES, DESCRIPTIONS_MOCKING, PHOTO_LINK};
