@@ -1,8 +1,7 @@
 import {createElement} from '../render.js';
 
-function createFormCreationTemplate() {
-  return (
-    `<ul class="trip-events__list">
+const createFormCreationTemplate = () =>
+  `<ul class="trip-events__list">
     <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
@@ -166,9 +165,9 @@ function createFormCreationTemplate() {
         </section>
       </form>
     </li>
-  </ul>`
-  );
-}
+  </ul>`;
+
+
 export default class FormCreationView {
   getTemplate() {
     return createFormCreationTemplate();
