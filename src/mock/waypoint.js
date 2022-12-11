@@ -1,4 +1,4 @@
-import {getRandomArrayElement, GetRandomNumber} from '.utils.js';
+import {getRandomArrayElement, GetRandomNumber} from '../utils.js';
 import {TRAVEL_TYPES, CITIES, DESCRIPTIONS_MOCKING, PHOTO_LINK} from '../const.js';
 
 const mockWaypoints = [
@@ -9,5 +9,33 @@ const mockWaypoints = [
     destination: [],
     price: GetRandomNumber(100000),
     additional: []
+  },
+  {
+    type: getRandomArrayElement(TRAVEL_TYPES),
+    timeStart: [],
+    timeFinish: [],
+    destination: [],
+    price: GetRandomNumber(100000),
+    additional: []
+  },
+  {
+    type: getRandomArrayElement(TRAVEL_TYPES),
+    timeStart: [],
+    timeFinish: [],
+    destination: [],
+    price: GetRandomNumber(100000),
+    additional: []
+  },
+  {
+    type: getRandomArrayElement(TRAVEL_TYPES),
+    timeStart: [],
+    timeFinish: [],
+    destination: [],
+    price: GetRandomNumber(100000),
+    additional: []
   }
 ];
+
+const getRandomMockWaypoint = () => getRandomArrayElement(mockWaypoints);
+
+export {getRandomMockWaypoint};
