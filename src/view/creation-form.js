@@ -2,23 +2,33 @@ import {createElement} from '../render.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
+const createOffers = (offers) =>
+  `<div class="event__available-offers">
+  <div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+    <label class="event__offer-label" for="event-offer-luggage-1">
+      <span class="event__offer-title">${offers.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offers.price}</span>
+    </label>
+  </div>`;
+
+function createOneOffer (offers) {
+
+  const array1 = offers.map((offer) => createOffers(offer));
+  return array1.join('');
+}
+
 const createFormCreationTemplate = (point, destinations, offers) => {
   const {dueDate, type, destination, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
   const {description} = destinations[0];
-  // const {title, price} = offers;
 
   const destinationPictures = [];
-  const offerTitles = [];
-  const offerPrices = [];
+
 
   for (let i = 0; i < destinations.length; i++) {
     destinationPictures.push(destinations[i].pictures[0].src);
-  }
-
-  for (let i = 0; i < offers.length; i++) {
-    offerTitles.push(offers[i].title);
-    offerPrices.push(offers[i].price);
   }
 
 
@@ -120,53 +130,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                <label class="event__offer-label" for="event-offer-luggage-1">
-                  <span class="event__offer-title">${offerTitles[0]}</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offerPrices[0]}</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                <label class="event__offer-label" for="event-offer-comfort-1">
-                  <span class="event__offer-title">${offerTitles[1]}</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offerPrices[1]}</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-meal-1">
-                  <span class="event__offer-title">${offerTitles[2]}</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offerPrices[2]}</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-                <label class="event__offer-label" for="event-offer-seats-1">
-                  <span class="event__offer-title">${offerTitles[3]}</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offerPrices[3]}</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-                <label class="event__offer-label" for="event-offer-train-1">
-                  <span class="event__offer-title">${offerTitles[4]}</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offerPrices[4]}</span>
-                </label>
-              </div>
-            </div>
+            ${createOneOffer(offers)}
           </section>
 
           <section class="event__section  event__section--destination">

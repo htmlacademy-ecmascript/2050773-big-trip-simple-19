@@ -4,11 +4,12 @@ import {render} from '../render.js';
 
 
 export default class FormPresenter {
-  formComponent = new FormCreationView();
 
   constructor({formContainer, pointsModel}) {
     this.formContainer = formContainer;
     this.pointsModel = pointsModel;
+    this.formComponent = new FormCreationView();
+
   }
 
   init() {
@@ -18,10 +19,10 @@ export default class FormPresenter {
 
     render(new FormCreationView(this.points[0], this.destination, this.offers), this.formContainer);
 
-    const TripEventListElement = document.querySelector('.trip-events__list');
+    const tripEventListElement = document.querySelector('.trip-events__list');
 
     for (let i = 0; i < this.points.length; i++) {
-      render(new TripEventView({point: this.points[i]}), TripEventListElement);
+      render(new TripEventView({point: this.points[i]}), tripEventListElement);
     }
   }
 }

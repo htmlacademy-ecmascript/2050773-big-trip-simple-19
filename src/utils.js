@@ -6,11 +6,11 @@ const getRandomArrayElement = (items) =>
   items[Math.floor(Math.random() * items.length)];
 
 
-const GetRandomNumber = (number) =>
+const getRandomNumber = (number) =>
   Math.floor(Math.random() * number);
 
 const humanizePointDueDate = (dueDate) => dueDate ? dayjs(dueDate).format(DATE_FORMAT) : '';
 
 
-export {getRandomArrayElement, GetRandomNumber, humanizePointDueDate};
+export {getRandomArrayElement, getRandomNumber, humanizePointDueDate};
 

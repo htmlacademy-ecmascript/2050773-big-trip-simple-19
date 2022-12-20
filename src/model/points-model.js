@@ -3,9 +3,12 @@ import {getRandomPoint, getRandomDestination, getRandomOffers} from '../mock/poi
 const WAYPOINT_COUNT = 5;
 
 export default class PointsModel {
-  points = Array.from({length: WAYPOINT_COUNT}, getRandomPoint);
-  destinations = Array.from({length: WAYPOINT_COUNT}, getRandomDestination);
-  offers = Array.from({length: WAYPOINT_COUNT}, getRandomOffers);
+
+  constructor() {
+    this.points = Array.from({length: WAYPOINT_COUNT}, getRandomPoint);
+    this.destinations = Array.from({length: WAYPOINT_COUNT}, getRandomDestination);
+    this.offers = Array.from({length: WAYPOINT_COUNT}, getRandomOffers);
+  }
 
   getPoints() {
     return this.points;
@@ -19,4 +22,3 @@ export default class PointsModel {
     return this.offers;
   }
 }
-
