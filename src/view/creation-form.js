@@ -13,11 +13,7 @@ const createOffers = (offers) =>
     </label>
   </div>`;
 
-function createOneOffer (offers) {
-
-  const array1 = offers.map((offer) => createOffers(offer));
-  return array1.join('');
-}
+const createOneOffer = (offers) => offers.map((offer) => createOffers(offer)).join('');
 
 const createFormCreationTemplate = (point, destinations, offers) => {
   const {dueDate, type, destination, basePrice} = point;
@@ -153,25 +149,30 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 };
 
 export default class FormCreationView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #element = null;
+
   constructor(point, destinations, offers) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createFormCreationTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
