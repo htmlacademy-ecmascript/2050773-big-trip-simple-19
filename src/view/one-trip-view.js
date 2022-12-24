@@ -40,7 +40,7 @@ const createTripEventTemplate = (point) => {
 };
 
 
-export default class TripEventView {
+export default class TripEventComponent {
   #element = null;
   #point = null;
 

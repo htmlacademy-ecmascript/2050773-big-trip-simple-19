@@ -7,15 +7,15 @@ import PointsModel from './model/points-model';
 
 
 const siteFiltersElement = document.querySelector('.trip-controls__filters');
-const tripEventsElement = document.querySelector('.trip-events'); //его в презентер
+const tripEventsSection = document.querySelector('.trip-events'); //его в презентер
 
 render(new FilterView(), siteFiltersElement);
-render(new SortView(), tripEventsElement);
+render(new SortView(), tripEventsSection);
 
 
 const pointsModel = new PointsModel();
 const formPresenter = new FormPresenter({
-  formContainer: tripEventsElement,
+  formContainer: tripEventsSection,
   pointsModel,
 });
 
