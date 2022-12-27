@@ -148,7 +148,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class FormCreationView {
+export default class FormCreation {
   #point = null;
   #destinations = null;
   #offers = null;
