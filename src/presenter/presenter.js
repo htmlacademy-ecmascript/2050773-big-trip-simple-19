@@ -39,7 +39,7 @@ export default class FormPresenter {
 
   #renderPoint(point, destinations, offers) {
     const pointComponent = new TripEventComponent({point});
-    const pointEditComponent = new FormCreation({point, destinations, offers});
+    const pointEditComponent = new FormCreation(point, destinations, offers);
 
     const replacePointToForm = () => {
       this.#pointComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
@@ -49,16 +49,31 @@ export default class FormPresenter {
       this.#pointComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
     };
 
-    console.log(destinations);
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click',() => {
       replacePointToForm();
+      document.addEventListener('keydown', escKeyDownHandler);
     });
 
-    // pointEditComponent.element.querySelector('form').addEventListener('submit',(evt) =>{
-    //   evt.preventDefault();
-    //   replaceFormToPoint();
-    // });
+    pointEditComponent.element.querySelector('form').addEventListener('submit',(evt) =>{
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    });
+
+    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click',(evt) =>{
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    });
 
     render(pointComponent, this.#pointComponent.element);
   }
