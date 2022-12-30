@@ -1,6 +1,8 @@
 import FormCreation from '../view/creation-form.js';
 import TripEventComponent from '../view/one-trip-view.js';
 import TripEventsView from '../view/events-view.js';
+import NoTripView from '../view/no-trip-view.js';
+import SortView from '../view/sort.js';
 import {render} from '../render.js';
 
 
@@ -28,12 +30,13 @@ export default class FormPresenter {
 
     render(this.#pointComponent, this.#formContainer);
 
-
-    // render(new FormCreation(this.#points[0], this.#destinations, this.#offers), this.#formContainer, RenderPosition.AFTERBEGIN);
-
-    for (let i = 0; i < this.#points.length; i++) {
-
-      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+    if (this.#points.every((point) => point.isArchive)) {
+      render(new NoTripView(), this.#pointComponent.element);
+    } else {
+      render(new SortView(), this.#pointComponent.element);
+      for (let i = 0; i < this.#points.length; i++) {
+        this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+      }
     }
   }
 
