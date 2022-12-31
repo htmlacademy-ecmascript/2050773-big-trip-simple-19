@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
@@ -40,27 +40,15 @@ const createTripEventTemplate = (point) => {
 };
 
 
-export default class TripEventComponent {
-  #element = null;
+export default class TripEventComponent extends AbstractView {
   #point = null;
 
   constructor({point}) {
+    super();
     this.#point = point;
   }
 
   get template() {
     return createTripEventTemplate(this.#point);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

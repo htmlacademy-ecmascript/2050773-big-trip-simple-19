@@ -3,7 +3,7 @@ import TripEventComponent from '../view/one-trip-view.js';
 import TripEventsView from '../view/events-view.js';
 import NoTripView from '../view/no-trip-view.js';
 import SortView from '../view/sort.js';
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 
 export default class FormPresenter {

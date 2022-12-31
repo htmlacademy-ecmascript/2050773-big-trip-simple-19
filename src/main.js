@@ -1,11 +1,11 @@
 import FilterView from './view/filter.js';
-import {render} from './render.js';
+import {render} from './framework/render.js';
 import FormPresenter from './presenter/presenter.js';
 import PointsModel from './model/points-model';
 
 
 const siteFiltersElement = document.querySelector('.trip-controls__filters');
-const tripEventsSection = document.querySelector('.trip-events'); //его в презентер
+const tripEventsSection = document.querySelector('.trip-events');
 
 render(new FilterView(), siteFiltersElement);
 

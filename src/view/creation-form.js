@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
@@ -151,13 +151,13 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class FormCreation {
+export default class FormCreation extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #element = null;
 
   constructor(point, destinations, offers) {
+    super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -165,17 +165,5 @@ export default class FormCreation {
 
   get template() {
     return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
