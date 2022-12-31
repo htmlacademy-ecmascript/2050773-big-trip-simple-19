@@ -42,13 +42,23 @@ const createTripEventTemplate = (point) => {
 
 export default class TripEventComponent extends AbstractView {
   #point = null;
+  #handleEditClick = null;
 
-  constructor({point}) {
+  constructor({point, onEditClick}) {
     super();
     this.#point = point;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createTripEventTemplate(this.#point);
   }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

@@ -155,15 +155,34 @@ export default class FormCreation extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
+  #handleFormSubmit = null;
+  #handleRolldownClick = null;
 
-  constructor(point, destinations, offers) {
+
+  constructor(point, destinations, offers, {onFormSubmit, onRolldownClick}) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRolldownClick = onRolldownClick;
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editRolldownHandler);
   }
 
   get template() {
     return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #editRolldownHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRolldownClick();
+  };
 }
