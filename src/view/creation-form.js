@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDueDate} from '../utils.js';
 
 
@@ -151,31 +151,38 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class FormCreation {
+export default class FormCreation extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #element = null;
+  #handleFormSubmit = null;
+  #handleRolldownClick = null;
 
-  constructor(point, destinations, offers) {
+
+  constructor(point, destinations, offers, {onFormSubmit, onRolldownClick}) {
+    super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRolldownClick = onRolldownClick;
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editRolldownHandler);
   }
 
   get template() {
     return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #editRolldownHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRolldownClick();
+  };
 }
