@@ -1,9 +1,8 @@
-import FormCreation from '../view/creation-form.js';
-import TripEventComponent from '../view/one-trip-view.js';
-import TripEventsView from '../view/events-view.js';
+import TripEventsListView from '../view/trips-list-view.js';
 import NoTripView from '../view/no-trip-view.js';
 import SortView from '../view/sort.js';
 import {render} from '../framework/render.js';
+import TripEventPresenter from '../presenter/trip-evet-presenter.js';
 
 
 export default class FormPresenter {
@@ -14,7 +13,7 @@ export default class FormPresenter {
   #destinations = [];
   #offers = [];
 
-  #pointComponent = new TripEventsView();
+  #pointComponent = new TripEventsListView();
 
 
   constructor({formContainer, pointsModel}) {
@@ -42,40 +41,10 @@ export default class FormPresenter {
 
   #renderPoint(point, destinations, offers) {
 
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new TripEventComponent({point,
-      onEditClick: () => {
-        replacePointToForm.call(this);
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const tripEventPresenter = new TripEventPresenter({
+      tripListContainer: this.#pointComponent.element,
     });
 
-    const pointEditComponent = new FormCreation(point, destinations, offers,{
-      onFormSubmit: () => {
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onRolldownClick: () => {
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-    });
-
-    function replacePointToForm() {
-      this.#pointComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
-    }
-
-    function replaceFormToPoint () {
-      this.#pointComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
-    }
-
-    render(pointComponent, this.#pointComponent.element);
+    tripEventPresenter.init(point, destinations, offers);
   }
 }
