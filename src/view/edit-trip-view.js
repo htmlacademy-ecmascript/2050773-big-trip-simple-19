@@ -151,7 +151,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class FormCreation extends AbstractView {
+export default class EditTripView extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
@@ -159,7 +159,7 @@ export default class FormCreation extends AbstractView {
   #handleRolldownClick = null;
 
 
-  constructor(point, destinations, offers, {onFormSubmit, onRolldownClick}) {
+  constructor({point, destinations, offers, onFormSubmit, onRolldownClick}) {
     super();
     this.#point = point;
     this.#destinations = destinations;

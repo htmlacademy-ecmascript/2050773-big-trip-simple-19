@@ -1,20 +1,22 @@
-import FormCreation from '../view/creation-form.js';
-import TripEventComponent from '../view/one-trip-view.js';
-import TripEventsView from '../view/events-view.js';
+import TripEventsListView from '../view/trips-list-view.js';
 import NoTripView from '../view/no-trip-view.js';
-import SortView from '../view/sort.js';
-import {render} from '../framework/render.js';
+import SortView from '../view/sort-view.js';
+import {render, RenderPosition} from '../framework/render.js';
+import TripEventPresenter from './trip-event-presenter.js';
 
 
 export default class FormPresenter {
   #formContainer = null;
   #pointsModel = null;
 
-  #points = [];
+  #points = []; // как boardTasks в примере
   #destinations = [];
   #offers = [];
 
-  #pointComponent = new TripEventsView();
+  #pointComponent = new TripEventsListView();
+  #tripEventPresenter = new Map();
+  #sortComponent = new SortView();
+  #noTripComponent = new NoTripView();
 
 
   constructor({formContainer, pointsModel}) {
@@ -28,54 +30,57 @@ export default class FormPresenter {
     this.#destinations = [...this.#pointsModel.destinations];
     this.#offers = [...this.#pointsModel.offers];
 
-    render(this.#pointComponent, this.#formContainer);
+    this.#renderBoard();
+  }
 
-    if (this.#points.every((point) => point.isArchive)) {
-      render(new NoTripView(), this.#pointComponent.element);
-    } else {
-      render(new SortView(), this.#pointComponent.element);
-      for (let i = 0; i < this.#points.length; i++) {
-        this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
-      }
-    }
+  #handleModeChange = () => {
+    this.#tripEventPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  // #handlePointChange = (updatedPoint) => {
+  //   this.#points = updateItem(this.#points, updatedPoint);
+  //   // this.#tripEventPresenter.get(updatedPoint.id).init(updatedPoint);
+  // };
+
+
+  #renderSort() {
+    render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderPoint(point, destinations, offers) {
 
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new TripEventComponent({point,
-      onEditClick: () => {
-        replacePointToForm.call(this);
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const tripEventPresenter = new TripEventPresenter({
+      tripListContainer: this.#pointComponent.element,
+      // onDataChange: this.#handlePointChange
+      onModeChange: this.#handleModeChange
     });
 
-    const pointEditComponent = new FormCreation(point, destinations, offers,{
-      onFormSubmit: () => {
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onRolldownClick: () => {
-        replaceFormToPoint.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-    });
+    tripEventPresenter.init(point, destinations, offers);
+    this.#tripEventPresenter.set(point.id, tripEventPresenter);
+  }
 
-    function replacePointToForm() {
-      this.#pointComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+  #renderPoints() {
+    for (let i = 0; i < this.#points.length; i++) {
+      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
     }
+  }
 
-    function replaceFormToPoint () {
-      this.#pointComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+  #renderNoPoints() {
+    render(this.#noTripComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #clearTrips() {
+    this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
+    this.#tripEventPresenter.clear();
+  }
+
+  #renderBoard() {
+    render(this.#pointComponent, this.#formContainer);
+    if (this.#points.every((point) => point.isArchive)) {
+      this.#renderNoPoints();
+      return;
     }
-
-    render(pointComponent, this.#pointComponent.element);
+    this.#renderSort();
+    this.#renderPoints();
   }
 }

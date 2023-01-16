@@ -1,4 +1,5 @@
 import {getRandomArrayElement, getRandomNumber} from '../utils.js';
+import {nanoid} from 'nanoid';
 import {PHOTO_LINK} from '../const.js';
 
 
@@ -114,7 +115,6 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T12:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
     destination: 'Chamonix',
-    id: '1',
     offers: [1],
     type: 'Bus'
   },
@@ -124,7 +124,6 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T20:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
     destination: 'New York',
-    id: '2',
     offers: [1],
     type: 'Train'
   },
@@ -134,7 +133,6 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
     destination: 'Paris',
-    id: '3',
     offers: OFFERS.id,
     type: 'Ship'
   },
@@ -144,7 +142,6 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
     destination: 'Istanbul',
-    id: '4',
     offers: OFFERS.id,
     type: 'Taxi'
   },
@@ -154,7 +151,6 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
     destination: 'Buenos-Aires',
-    id: '5',
     offers: OFFERS.id,
     type: 'Restaurant'
   },
@@ -164,13 +160,18 @@ const MOCK_POINTS = [
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
     destination: 'Berlin',
-    id: '6',
     offers: OFFERS.id,
     type: 'Bars'
   },
 ];
 
-const getRandomPoint = () => getRandomArrayElement(MOCK_POINTS);
+function getRandomPoint() {
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(MOCK_POINTS)
+  };
+}
+
 const getRandomDestination = () => getRandomArrayElement(DESTINATIONS);
 const getRandomOffers = () => getRandomArrayElement(OFFERS);
 
