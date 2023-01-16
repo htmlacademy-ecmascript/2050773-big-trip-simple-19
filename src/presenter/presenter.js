@@ -14,7 +14,7 @@ export default class FormPresenter {
   #offers = [];
 
   #pointComponent = new TripEventsListView();
-  #tripPresenter = new Map();
+  #tripEventPresenter = new Map();
   #sortComponent = new SortView();
   #noTripComponent = new NoTripView();
 
@@ -34,7 +34,7 @@ export default class FormPresenter {
   }
 
   #handleModeChange = () => {
-    this.#tripPresenter.forEach((presenter) => presenter.resetView());
+    this.#tripEventPresenter.forEach((presenter) => presenter.resetView());
   };
 
   #renderSort() {
@@ -49,6 +49,7 @@ export default class FormPresenter {
     });
 
     tripEventPresenter.init(point, destinations, offers);
+    this.#tripEventPresenter.set(point.id, tripEventPresenter);
   }
 
   #renderPoints() {
@@ -59,6 +60,11 @@ export default class FormPresenter {
 
   #renderNoPoints() {
     render(this.#noTripComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #clearTrips() {
+    this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
+    this.#tripEventPresenter.clear();
   }
 
   #renderBoard() {

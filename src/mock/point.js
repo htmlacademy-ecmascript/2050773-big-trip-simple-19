@@ -1,4 +1,5 @@
 import {getRandomArrayElement, getRandomNumber} from '../utils.js';
+import {nanoid} from 'nanoid';
 import {PHOTO_LINK} from '../const.js';
 
 
@@ -170,7 +171,13 @@ const MOCK_POINTS = [
   },
 ];
 
-const getRandomPoint = () => getRandomArrayElement(MOCK_POINTS);
+function getRandomPoint() {
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(MOCK_POINTS)
+  };
+}
+
 const getRandomDestination = () => getRandomArrayElement(DESTINATIONS);
 const getRandomOffers = () => getRandomArrayElement(OFFERS);
 
