@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import EditTripView from '../view/edit-trp-view.js';
 import TripEventComponent from '../view/one-trip-view.js';
 
@@ -28,6 +28,9 @@ export default class TripEventPresenter {
     this.#destinations = destinations;
     this.#offers = offers;
 
+    const prevTripComponent = this.#tripComponent;
+    const prevTripEditComponent = this.#tripEditComponent;
+
     this.#tripComponent = new TripEventComponent({
       point: this.#point,
       destinations: this.#destinations,
@@ -43,14 +46,33 @@ export default class TripEventPresenter {
       onRolldownClick: this.#handleFormSubmit,
     });
 
-    render(this.#tripComponent, this.#tripListContainer);
+    if (prevTripComponent === null || prevTripEditComponent === null) {
+      render(this.#tripComponent, this.#tripListContainer);
+      return;
+    }
+
+    if (this.#tripListContainer.contains(prevTripEditComponent.element)) {
+      replace(this.#tripComponent, prevTripEditComponent);
+    }
+
+    if (this.#tripListContainer.contains(prevTripEditComponent.element)) {
+      replace(this.#tripEditComponent, prevTripEditComponent);
+    }
+
+    remove(prevTripComponent);
+    remove(prevTripEditComponent);
   }
 
-  resetView() {
-    if (this.#mode !== Mode.DEFAULT) {
-      this.#replaceFormToPoint();
-    }
+  // resetView() {
+  //   if (this.#mode !== Mode.DEFAULT) {
+  //     this.#replaceFormToPoint();
+  //   }
+  // }
+  destroy() {
+    remove(this.#tripComponent);
+    remove(this.#tripEditComponent);
   }
+
 
   #replacePointToForm() {
     replace(this.#tripEditComponent, this.#tripComponent);

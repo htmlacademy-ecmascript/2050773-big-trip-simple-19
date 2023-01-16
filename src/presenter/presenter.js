@@ -41,7 +41,6 @@ export default class FormPresenter {
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-
   #renderPoint(point, destinations, offers) {
 
     const tripEventPresenter = new TripEventPresenter({
@@ -58,14 +57,14 @@ export default class FormPresenter {
     }
   }
 
-  #renderNoTasks() {
+  #renderNoPoints() {
     render(this.#noTripComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderBoard() {
     render(this.#pointComponent, this.#formContainer);
     if (this.#points.every((point) => point.isArchive)) {
-      this.#renderNoTasks();
+      this.#renderNoPoints();
       return;
     }
     this.#renderSort();
