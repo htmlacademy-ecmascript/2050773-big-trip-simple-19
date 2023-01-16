@@ -1,5 +1,5 @@
 import {render, replace, remove} from '../framework/render.js';
-import EditTripView from '../view/edit-trp-view.js';
+import EditTripView from '../view/edit-trip-view.js';
 import TripEventComponent from '../view/one-trip-view.js';
 
 const Mode = {
@@ -59,18 +59,24 @@ export default class TripEventPresenter {
       replace(this.#tripEditComponent, prevTripEditComponent);
     }
 
+    if (this.#mode === Mode.EDITING) {
+      replace(this.#tripEditComponent, prevTripEditComponent);
+    }
+
     remove(prevTripComponent);
     remove(prevTripEditComponent);
+
   }
 
-  // resetView() {
-  //   if (this.#mode !== Mode.DEFAULT) {
-  //     this.#replaceFormToPoint();
-  //   }
-  // }
   destroy() {
     remove(this.#tripComponent);
     remove(this.#tripEditComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
   }
 
 

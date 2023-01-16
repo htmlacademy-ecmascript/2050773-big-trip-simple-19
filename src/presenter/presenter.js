@@ -2,7 +2,7 @@ import TripEventsListView from '../view/trips-list-view.js';
 import NoTripView from '../view/no-trip-view.js';
 import SortView from '../view/sort-view.js';
 import {render, RenderPosition} from '../framework/render.js';
-import TripEventPresenter from '../presenter/trip-evet-presenter.js';
+import TripEventPresenter from './trip-event-presenter.js';
 
 
 export default class FormPresenter {
@@ -37,6 +37,12 @@ export default class FormPresenter {
     this.#tripEventPresenter.forEach((presenter) => presenter.resetView());
   };
 
+  // #handlePointChange = (updatedPoint) => {
+  //   this.#points = updateItem(this.#points, updatedPoint);
+  //   // this.#tripEventPresenter.get(updatedPoint.id).init(updatedPoint);
+  // };
+
+
   #renderSort() {
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
@@ -45,7 +51,8 @@ export default class FormPresenter {
 
     const tripEventPresenter = new TripEventPresenter({
       tripListContainer: this.#pointComponent.element,
-      // onModeChange: this.#handleModeChange
+      // onDataChange: this.#handlePointChange
+      onModeChange: this.#handleModeChange
     });
 
     tripEventPresenter.init(point, destinations, offers);
