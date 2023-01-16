@@ -159,7 +159,7 @@ export default class EditTripView extends AbstractView {
   #handleRolldownClick = null;
 
 
-  constructor(point, destinations, offers, onFormSubmit, onRolldownClick) {
+  constructor({point, destinations, offers, onFormSubmit, onRolldownClick}) {
     super();
     this.#point = point;
     this.#destinations = destinations;

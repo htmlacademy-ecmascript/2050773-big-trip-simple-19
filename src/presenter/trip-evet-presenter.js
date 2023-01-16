@@ -1,6 +1,11 @@
 import {render, replace} from '../framework/render.js';
-import EditTripView from '../view/edit-point-form.js';
+import EditTripView from '../view/edit-trp-view.js';
 import TripEventComponent from '../view/one-trip-view.js';
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
 export default class TripEventPresenter {
   #tripListContainer = null;
@@ -9,9 +14,13 @@ export default class TripEventPresenter {
   #point = null;
   #destinations = null;
   #offers = null;
+  #handleModeChange = null;
+  #mode = Mode.DEFAULT;
 
-  constructor({tripListContainer}) {
+
+  constructor({tripListContainer, onModeChange}) {
     this.#tripListContainer = tripListContainer;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point, destinations, offers) {
@@ -26,7 +35,7 @@ export default class TripEventPresenter {
       onEditClick: this.#handleEditClick,
     });
 
-    this.tripEditComponent = new EditTripView({
+    this.#tripEditComponent = new EditTripView({
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
@@ -37,14 +46,23 @@ export default class TripEventPresenter {
     render(this.#tripComponent, this.#tripListContainer);
   }
 
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
+  }
+
   #replacePointToForm() {
     replace(this.#tripEditComponent, this.#tripComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToPoint() {
     replace(this.#tripComponent, this.#tripEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
