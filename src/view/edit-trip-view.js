@@ -1,8 +1,8 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDueDate} from '../utils.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {humanizePointDueDate, createDestination} from '../utils.js';
 
 
-const createOffers = (offers) =>
+const createOfferTemplate = (offers) =>
   `<div class="event__available-offers">
   <div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
@@ -13,14 +13,30 @@ const createOffers = (offers) =>
     </label>
   </div>`;
 
-const createOneOffer = (offers) => offers.map((offer) => createOffers(offer)).join('');
+
+const findOffersByID = (id, offers) => {
+  const offersArray = [];
+
+  for (let i = 0; i < id.length; i++){
+    for (let j = 0; j < offers.length; j++) {
+      if (offers[j].id === id[i]) {
+        offersArray.push(offers[j]);
+      }
+    }
+  }
+
+  return offersArray;
+};
+
+const createOffers = (offers) => offers.map((offer) => createOfferTemplate(offer)).join('');
 
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dueDate, type, destination, basePrice} = point;
+  const {dueDate, type, destination, offersId, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
   const {description} = destinations[0];
-
   const destinationPictures = [];
+
+  const offersArraybyId = findOffersByID(offersId, offers);
 
 
   for (let i = 0; i < destinations.length; i++) {
@@ -95,7 +111,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destination, destinations)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -129,7 +145,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOneOffer(offers)}
+            ${createOffers(offersArraybyId)}
           </section>
 
           <section class="event__section  event__section--destination">
@@ -151,19 +167,20 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class EditTripView extends AbstractView {
-  #point = null;
-  #destinations = null;
-  #offers = null;
+export default class EditTripView extends AbstractStatefulView {
+  // #point = null;
+  // #destinations = null;
+  // #offers = null;
   #handleFormSubmit = null;
   #handleRolldownClick = null;
 
 
   constructor({point, destinations, offers, onFormSubmit, onRolldownClick}) {
     super();
-    this.#point = point;
-    this.#destinations = destinations;
-    this.#offers = offers;
+    // this.#point = point;
+    // this.#destinations = destinations;
+    // this.#offers = offers;
+    this._setState(EditTripView.parseTaskToState(point, destinations, offers));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRolldownClick = onRolldownClick;
     this.element.querySelector('form')
@@ -173,7 +190,8 @@ export default class EditTripView extends AbstractView {
   }
 
   get template() {
-    return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
+    // return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
+    return createFormCreationTemplate(this._state);
   }
 
   #formSubmitHandler = (evt) => {
@@ -183,6 +201,20 @@ export default class EditTripView extends AbstractView {
 
   #editRolldownHandler = (evt) => {
     evt.preventDefault();
-    this.#handleRolldownClick();
+    // this.#handleRolldownClick();
+    this.#handleFormSubmit(EditTripView.parseStateToTask(this._state));
   };
+
+  #typeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+    });
+  };
+
+  static parseTaskToState(point, destinations, offers) {
+    return {...point, ...destinations, ...offers
+    };
+  }
+
 }

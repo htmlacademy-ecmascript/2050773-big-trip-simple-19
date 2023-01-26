@@ -5,32 +5,37 @@ import {PHOTO_LINK} from '../const.js';
 
 const OFFERS = [
   {
-    id: 1,
+    id: 5,
     title: 'Upgrade to a business class',
     price: 120
   }
   ,
   {
-    id: 2,
+    id: 6,
     title: 'Turn on the radio',
     price: 12
   },
   {
-    id: 3,
+    id: 7,
     title: 'Help with luggage',
     price: 90
   }
   ,
   {
-    id: 4,
+    id: 8,
     title: 'Smoking inside the cabin',
     price: 100000
+  },
+  {
+    id: 9,
+    title: 'Earplugs and sleeping mask',
+    price: 300
   }
 ];
 
 const DESTINATIONS = [
   {
-    id: 1,
+    id: 9,
     description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Chamonix',
     pictures: [
@@ -41,7 +46,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 2,
+    id: 10,
     description: 'Istanbul, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Istanbul',
     pictures: [
@@ -52,7 +57,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 3,
+    id: 11,
     description: 'Buenos-Aires, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Buenos-Aires',
     pictures: [
@@ -63,7 +68,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 4,
+    id: 12,
     description: 'New York, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'New York',
     pictures: [
@@ -74,7 +79,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 5,
+    id: 13,
     description: 'Paris, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Paris',
     pictures: [
@@ -85,7 +90,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 6,
+    id: 14,
     description: 'Berlin, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Berlin',
     pictures: [
@@ -96,7 +101,7 @@ const DESTINATIONS = [
     ]
   },
   {
-    id: 7,
+    id: 15,
     description: 'Tbilisi, is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Tbilisi',
     pictures: [
@@ -114,8 +119,8 @@ const MOCK_POINTS = [
     dueDate: '2019-07-10',
     dateFrom: '2019-07-10T12:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
-    destination: 'Chamonix',
-    offers: [1],
+    destination: 9,
+    offersId: [5, 8, 9],
     type: 'Bus'
   },
   {
@@ -123,8 +128,8 @@ const MOCK_POINTS = [
     dueDate: '2019-03-10',
     dateFrom: '2019-07-10T20:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
-    destination: 'New York',
-    offers: [1],
+    destination: 14,
+    offersId: [6, 7],
     type: 'Train'
   },
   {
@@ -132,8 +137,8 @@ const MOCK_POINTS = [
     dueDate: '2019-07-1',
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
-    destination: 'Paris',
-    offers: OFFERS.id,
+    destination: 11,
+    offersId: [6, 9],
     type: 'Ship'
   },
   {
@@ -141,27 +146,27 @@ const MOCK_POINTS = [
     dueDate: '2019-01-1',
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
-    destination: 'Istanbul',
-    offers: OFFERS.id,
-    type: 'Taxi'
+    destination: 12,
+    offersId: [5, 8],
+    type: 'Bus'
   },
   {
     basePrice: 900,
     dueDate: '2019-01-1',
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
-    destination: 'Buenos-Aires',
-    offers: OFFERS.id,
-    type: 'Restaurant'
+    destination: 14,
+    offersId: [6, 7],
+    type: 'Train'
   },
   {
     basePrice: 900,
     dueDate: '2022-11-1',
     dateFrom: '2019-07-10T21:55:56.845Z',
     dateTo: '2019-07-11T11:22:59.375Z',
-    destination: 'Berlin',
-    offers: OFFERS.id,
-    type: 'Bars'
+    destination: 10,
+    offersId: [6, 7, 9],
+    type: 'Ship'
   },
 ];
 
@@ -175,4 +180,4 @@ function getRandomPoint() {
 const getRandomDestination = () => getRandomArrayElement(DESTINATIONS);
 const getRandomOffers = () => getRandomArrayElement(OFFERS);
 
-export {getRandomPoint, getRandomDestination, getRandomOffers};
+export {getRandomPoint, getRandomDestination, getRandomOffers,DESTINATIONS, OFFERS};
