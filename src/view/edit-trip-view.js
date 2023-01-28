@@ -1,6 +1,15 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {humanizePointDueDate, createDestination} from '../utils.js';
+import {humanizePointDueDate, createDestination, createDescription} from '../utils.js';
 
+const BLANK_POINT = {
+  basePrice: 0,
+  dueDate: '2022-02-24',
+  dateFrom: '22022-02-24T12:55:56.845Z',
+  dateTo: '2022-02-24T11:22:13.375Z',
+  destination: 0,
+  offersId: [0],
+  type: 'Bus'
+};
 
 const createOfferTemplate = (offers) =>
   `<div class="event__available-offers">
@@ -33,7 +42,6 @@ const createOffers = (offers) => offers.map((offer) => createOfferTemplate(offer
 const createFormCreationTemplate = (point, destinations, offers) => {
   const {dueDate, type, destination, offersId, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
-  const {description} = destinations[0];
   const destinationPictures = [];
 
   const offersArraybyId = findOffersByID(offersId, offers);
@@ -150,7 +158,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description"> ${description}</p>
+            <p class="event__destination-description"> ${createDescription(destination, destinations)}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
@@ -167,42 +175,45 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class EditTripView extends AbstractStatefulView {
+export default class EditPointView extends AbstractStatefulView {
   // #point = null;
-  // #destinations = null;
-  // #offers = null;
+  #destinations = null;
+  #offers = null;
   #handleFormSubmit = null;
   #handleRolldownClick = null;
 
 
-  constructor({point, destinations, offers, onFormSubmit, onRolldownClick}) {
+  constructor({point = BLANK_POINT, destinations, offers, onFormSubmit, onRolldownClick}) {
     super();
-    // this.#point = point;
-    // this.#destinations = destinations;
-    // this.#offers = offers;
-    this._setState(EditTripView.parseTaskToState(point, destinations, offers));
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
+    this._restoreHandlers();
     this.#handleRolldownClick = onRolldownClick;
-    this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editRolldownHandler);
   }
 
   get template() {
     // return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
-    return createFormCreationTemplate(this._state);
+    return createFormCreationTemplate(this._state, this.#destinations, this.#offers);
   }
 
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormSubmit();
-  };
+  _restoreHandlers() {
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editRolldownHandler);
+    this.element.querySelector('.event__type-input')
+      .addEventListener('input', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#descriptionInputHandler);
+  }
 
-  #editRolldownHandler = (evt) => {
+  #descriptionInputHandler = (evt) => {
     evt.preventDefault();
-    // this.#handleRolldownClick();
-    this.#handleFormSubmit(EditTripView.parseStateToTask(this._state));
+    this._setState({
+      description: evt.target.value,
+    });
   };
 
   #typeChangeHandler = (evt) => {
@@ -212,9 +223,29 @@ export default class EditTripView extends AbstractStatefulView {
     });
   };
 
-  static parseTaskToState(point, destinations, offers) {
-    return {...point, ...destinations, ...offers
-    };
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #editRolldownHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRolldownClick();
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
+  };
+
+
+  reset = (point) => {
+    this.updateElement(
+      EditPointView.parsePointToState(point)
+    );
+  };
+
+  static parsePointToState(point) {
+    return { ...point };
   }
 
+  static parseStateToPoint(state) {
+    return { ...state };
+  }
 }

@@ -24,6 +24,15 @@ const createDestination = (id, destinations) => {
   }
 };
 
+const createDescription = (id, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem, createDestination};
+    if (destinations[i].id === id) {
+      return destinations[i].description;
+    }
+  }
+};
+
+
+export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem, createDestination, createDescription};
 
