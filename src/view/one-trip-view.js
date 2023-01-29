@@ -1,9 +1,9 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDueDate} from '../utils.js';
+import {humanizePointDueDate,createDestination} from '../utils.js';
 
 
-const createTripEventTemplate = (point) => {
-  const {dueDate, type, destination, basePrice} = point;
+const createTripEventTemplate = (point, destinations) => {
+  const {dueDate, destination, type, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
 
 
@@ -13,7 +13,7 @@ const createTripEventTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination}</h3>
+        <h3 class="event__title">${type} ${createDestination(destination, destinations)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
@@ -42,11 +42,15 @@ const createTripEventTemplate = (point) => {
 
 export default class TripEventComponent extends AbstractView {
   #point = null;
+  #destinations = null;
+  #offers = null;
   #handleEditClick = null;
 
-  constructor({point, onEditClick}) {
+  constructor({point, destinations, offers,onEditClick}) {
     super();
     this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#handleEditClick = onEditClick;
 
     this.element.querySelector('.event__rollup-btn')
@@ -54,7 +58,7 @@ export default class TripEventComponent extends AbstractView {
   }
 
   get template() {
-    return createTripEventTemplate(this.#point);
+    return createTripEventTemplate(this.#point, this.#destinations, this.#offers);
   }
 
   #editClickHandler = (evt) => {

@@ -15,6 +15,24 @@ function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
 
+const createDestination = (id, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem};
+    if (destinations[i].id === id) {
+      return destinations[i].name;
+    }
+  }
+};
+
+const createDescription = (id, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
+
+    if (destinations[i].id === id) {
+      return destinations[i].description;
+    }
+  }
+};
+
+
+export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem, createDestination, createDescription};
 

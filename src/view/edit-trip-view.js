@@ -1,8 +1,17 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDueDate} from '../utils.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {humanizePointDueDate, createDestination, createDescription} from '../utils.js';
 
+const BLANK_POINT = {
+  basePrice: 0,
+  dueDate: '2022-02-24',
+  dateFrom: '22022-02-24T12:55:56.845Z',
+  dateTo: '2022-02-24T11:22:13.375Z',
+  destination: -1,
+  offersIds: [],
+  type: 'Bus'
+};
 
-const createOffers = (offers) =>
+const createOfferTemplate = (offers) =>
   `<div class="event__available-offers">
   <div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
@@ -13,14 +22,31 @@ const createOffers = (offers) =>
     </label>
   </div>`;
 
-const createOneOffer = (offers) => offers.map((offer) => createOffers(offer)).join('');
+
+const findOffersByID = (id, offers) => {
+  const offersArray = [];
+  if (id) {
+
+    for (let i = 0; i < id.length; i++){
+      for (let j = 0; j < offers.length; j++) {
+        if (offers[j].id === id[i]) {
+          offersArray.push(offers[j]);
+        }
+      }
+    }
+  }
+
+  return offersArray;
+};
+
+const createOffers = (offers) => offers.map((offer) => createOfferTemplate(offer)).join('');
 
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dueDate, type, destination, basePrice} = point;
+  const {dueDate, type, destination, offersIds, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
-  const {description} = destinations[0];
-
   const destinationPictures = [];
+
+  const offersArraybyId = findOffersByID(offersIds, offers);
 
 
   for (let i = 0; i < destinations.length; i++) {
@@ -95,7 +121,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destination, destinations)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -129,12 +155,12 @@ const createFormCreationTemplate = (point, destinations, offers) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOneOffer(offers)}
+            ${createOffers(offersArraybyId)}
           </section>
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description"> ${description}</p>
+            <p class="event__destination-description"> ${createDescription(destination, destinations)}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
@@ -151,30 +177,54 @@ const createFormCreationTemplate = (point, destinations, offers) => {
   </ul>`;
 };
 
-export default class EditTripView extends AbstractView {
-  #point = null;
+export default class EditPointView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
   #handleRolldownClick = null;
 
 
-  constructor({point, destinations, offers, onFormSubmit, onRolldownClick}) {
+  constructor({point = BLANK_POINT, destinations, offers, onFormSubmit, onRolldownClick}) {
     super();
-    this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRolldownClick = onRolldownClick;
+    this._restoreHandlers();
+  }
+
+  get template() {
+    return createFormCreationTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editRolldownHandler);
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationInputHandler);
   }
 
-  get template() {
-    return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
-  }
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
+    const newDestinationId = newDestination ? newDestination.id : -1;
+    this.updateElement({
+      destination: newDestinationId,
+    });
+  };
+
+  #typeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offersIds: this._state.type === evt.target.value ? this._state.offers : []
+    });
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -184,5 +234,21 @@ export default class EditTripView extends AbstractView {
   #editRolldownHandler = (evt) => {
     evt.preventDefault();
     this.#handleRolldownClick();
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
+
+
+  reset = (point) => {
+    this.updateElement(
+      EditPointView.parsePointToState(point)
+    );
+  };
+
+  static parsePointToState(point) {
+    return { ...point };
+  }
+
+  static parseStateToPoint(state) {
+    return { ...state };
+  }
 }
