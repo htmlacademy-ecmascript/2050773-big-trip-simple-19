@@ -6,8 +6,8 @@ const BLANK_POINT = {
   dueDate: '2022-02-24',
   dateFrom: '22022-02-24T12:55:56.845Z',
   dateTo: '2022-02-24T11:22:13.375Z',
-  destination: 0,
-  offersId: [0],
+  destination: -1,
+  offersIds: [],
   type: 'Bus'
 };
 
@@ -25,11 +25,13 @@ const createOfferTemplate = (offers) =>
 
 const findOffersByID = (id, offers) => {
   const offersArray = [];
+  if (id) {
 
-  for (let i = 0; i < id.length; i++){
-    for (let j = 0; j < offers.length; j++) {
-      if (offers[j].id === id[i]) {
-        offersArray.push(offers[j]);
+    for (let i = 0; i < id.length; i++){
+      for (let j = 0; j < offers.length; j++) {
+        if (offers[j].id === id[i]) {
+          offersArray.push(offers[j]);
+        }
       }
     }
   }
@@ -40,11 +42,11 @@ const findOffersByID = (id, offers) => {
 const createOffers = (offers) => offers.map((offer) => createOfferTemplate(offer)).join('');
 
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dueDate, type, destination, offersId, basePrice} = point;
+  const {dueDate, type, destination, offersIds, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
   const destinationPictures = [];
 
-  const offersArraybyId = findOffersByID(offersId, offers);
+  const offersArraybyId = findOffersByID(offersIds, offers);
 
 
   for (let i = 0; i < destinations.length; i++) {
@@ -176,7 +178,6 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 };
 
 export default class EditPointView extends AbstractStatefulView {
-  // #point = null;
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
@@ -189,12 +190,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.#offers = offers;
     this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
-    this._restoreHandlers();
     this.#handleRolldownClick = onRolldownClick;
+    this._restoreHandlers();
   }
 
   get template() {
-    // return createFormCreationTemplate(this.#point, this.#destinations, this.#offers);
     return createFormCreationTemplate(this._state, this.#destinations, this.#offers);
   }
 
@@ -203,16 +203,18 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editRolldownHandler);
-    this.element.querySelector('.event__type-input')
-      .addEventListener('input', this.#typeChangeHandler);
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination')
-      .addEventListener('change', this.#descriptionInputHandler);
+      .addEventListener('change', this.#destinationInputHandler);
   }
 
-  #descriptionInputHandler = (evt) => {
+  #destinationInputHandler = (evt) => {
     evt.preventDefault();
-    this._setState({
-      description: evt.target.value,
+    const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
+    const newDestinationId = newDestination ? newDestination.id : -1;
+    this.updateElement({
+      destination: newDestinationId,
     });
   };
 
@@ -220,6 +222,7 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offersIds: this._state.type === evt.target.value ? this._state.offers : []
     });
   };
 

@@ -9,7 +9,7 @@ export default class FormPresenter {
   #formContainer = null;
   #pointsModel = null;
 
-  #points = []; // как boardTasks в примере
+  #points = [];
   #destinations = [];
   #offers = [];
 
@@ -37,11 +37,6 @@ export default class FormPresenter {
     this.#tripEventPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  // #handlePointChange = (updatedPoint) => {
-  //   this.#points = updateItem(this.#points, updatedPoint);
-  //   // this.#tripEventPresenter.get(updatedPoint.id).init(updatedPoint);
-  // };
-
 
   #renderSort() {
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
@@ -51,7 +46,6 @@ export default class FormPresenter {
 
     const tripEventPresenter = new TripEventPresenter({
       tripListContainer: this.#pointComponent.element,
-      // onDataChange: this.#handlePointChange
       onModeChange: this.#handleModeChange
     });
 
