@@ -1,18 +1,13 @@
 import {getRandomPoint, DESTINATIONS, OFFERS} from '../mock/point.js';
+import Observable from '../framework/observable.js';
 
 const WAYPOINT_COUNT = 5;
 
-export default class PointsModel {
-  #points = [];
-  #destinations = [];
-  #offers = [];
+export default class PointsModel extends Observable {
+  #points = Array.from({length: WAYPOINT_COUNT}, getRandomPoint);
+  #destinations = DESTINATIONS;
+  #offers = OFFERS;
 
-  constructor () {
-    this.#points = Array.from({length: WAYPOINT_COUNT}, getRandomPoint);
-    this.#destinations = DESTINATIONS;
-    this.#offers = OFFERS;
-
-  }
 
   get points() {
     return this.#points;
