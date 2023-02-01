@@ -146,7 +146,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
+          <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -182,15 +182,18 @@ export default class EditPointView extends AbstractStatefulView {
   #offers = null;
   #handleFormSubmit = null;
   #handleRolldownClick = null;
+  #handleDeleteClick = null;
 
-
-  constructor({point = BLANK_POINT, destinations, offers, onFormSubmit, onRolldownClick}) {
+  constructor({point = BLANK_POINT, destinations, offers, onFormSubmit, onRolldownClick, onDeleteClick}) {
     super();
     this.#destinations = destinations;
     this.#offers = offers;
     this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRolldownClick = onRolldownClick;
+    this.#handleDeleteClick = onDeleteClick;
+
+
     this._restoreHandlers();
   }
 
@@ -207,6 +210,9 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationInputHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
+
   }
 
   #destinationInputHandler = (evt) => {
@@ -228,13 +234,15 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    const currentPoint = EditPointView.parseStateToPoint(this._state);
+    this.#handleFormSubmit(currentPoint);
   };
 
   #editRolldownHandler = (evt) => {
     evt.preventDefault();
-    this.#handleRolldownClick();
-    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
+    const currentPoint = EditPointView.parseStateToPoint(this._state);
+    this.#handleRolldownClick(currentPoint);
+    this.#handleFormSubmit(currentPoint);
   };
 
 
@@ -242,6 +250,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.updateElement(
       EditPointView.parsePointToState(point)
     );
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
   static parsePointToState(point) {
