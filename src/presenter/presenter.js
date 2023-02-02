@@ -103,7 +103,7 @@ export default class FormPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearBoard({resetRenderedTaskCount: true});
+    this.#clearBoard();
     this.#renderBoard();
   };
 
