@@ -1,14 +1,17 @@
 import TripEventsListView from '../view/trips-list-view.js';
 import NoTripView from '../view/no-trip-view.js';
 import SortView from '../view/sort-view.js';
+import NewPointPresenter from './new-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import TripEventPresenter from './trip-event-presenter.js';
-import {UpdateType, UserAction} from '../const.js';
+import {UpdateType, UserAction, FilterType, SortType} from '../const.js';
+import {filter} from '../utils.js';
 
 
 export default class FormPresenter {
   #formContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #points = [];
   #destinations = [];
@@ -16,20 +19,33 @@ export default class FormPresenter {
 
   #pointComponent = new TripEventsListView();
   #tripEventPresenter = new Map();
-  #sortComponent = new SortView();
+  #newPointPresenter = null;
   #noTripComponent = new NoTripView();
+  #sortComponent = null;
+  #currentSortType = SortType.PRICE;
 
 
-  constructor({formContainer, pointsModel}) {
+  constructor({formContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#formContainer = formContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
+
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
-
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
-    return this.#pointsModel.points;
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
+    return filteredPoints;
   }
 
   init() {
@@ -40,7 +56,14 @@ export default class FormPresenter {
     this.#renderBoard();
   }
 
+
+  createPoint() {
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+    this.#newPointPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#tripEventPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -74,10 +97,25 @@ export default class FormPresenter {
     }
   };
 
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#currentSortType = sortType;
+    this.#clearBoard({resetRenderedTaskCount: true});
+    this.#renderBoard();
+  };
 
   #renderSort() {
+    this.#sortComponent = new SortView({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
+
 
   #renderPoint(point, destinations, offers) {
 
@@ -103,6 +141,7 @@ export default class FormPresenter {
 
 
   #clearBoard() {
+    this.#newPointPresenter.destroy();
     this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
     this.#tripEventPresenter.clear();
     remove(this.#sortComponent);

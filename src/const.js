@@ -12,4 +12,17 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export {UserAction, UpdateType, PHOTO_LINK};
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future'
+};
+
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+export {UserAction, UpdateType, PHOTO_LINK, FilterType, SortType};

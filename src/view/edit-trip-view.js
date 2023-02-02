@@ -18,7 +18,7 @@ const createOfferTemplate = (offers) =>
     <label class="event__offer-label" for="event-offer-luggage-1">
       <span class="event__offer-title">${offers.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offers.price}</span>
+      <span class="event__offer-price" pattern="^[0-9]+$">${offers.price}</span>
     </label>
   </div>`;
 
