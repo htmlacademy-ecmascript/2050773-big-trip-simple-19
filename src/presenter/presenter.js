@@ -65,7 +65,7 @@ export default class FormPresenter {
 
   createPoint() {
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init(this.#points, this.#destinations, this.#offers);
+    this.#newPointPresenter.init(this.#points[0], this.#destinations, this.#offers);
   }
 
 
