@@ -5,7 +5,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import TripEventPresenter from './trip-event-presenter.js';
 import {UpdateType, UserAction, FilterType, SortType} from '../const.js';
-import {filter} from '../utils.js';
+// import {filter} from '../utils.js';
 
 
 export default class FormPresenter {
@@ -23,6 +23,7 @@ export default class FormPresenter {
   #noTripComponent = new NoTripView();
   #sortComponent = null;
   #currentSortType = SortType.PRICE;
+  #filterType = FilterType.FUTURE;
 
 
   constructor({formContainer, pointsModel, filterModel, onNewPointDestroy}) {
@@ -41,25 +42,23 @@ export default class FormPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
-    const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
-
-    return filteredPoints;
+    return this.#pointsModel.points;
   }
 
   init() {
-    this.#points = [...this.#pointsModel.points];
     this.#destinations = [...this.#pointsModel.destinations];
     this.#offers = [...this.#pointsModel.offers];
-
     this.#renderBoard();
   }
 
+  #updatePoints() {
+    this.#points = [...this.#pointsModel.points];
+  }
 
-  createPoint() {
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
-    this.#newPointPresenter.init();
+
+  createPoint(point, destinations, offers) {
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init(point, destinations, offers);
   }
 
   #handleModeChange = () => {
@@ -130,12 +129,19 @@ export default class FormPresenter {
   }
 
   #renderPoints() {
+    this.#updatePoints();
+
     for (let i = 0; i < this.#points.length; i++) {
       this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
     }
   }
 
+
   #renderNoPoints() {
+    this.#noTripComponent = new NoTripView({
+      filterType: this.#filterType
+    });
+
     render(this.#noTripComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -151,7 +157,14 @@ export default class FormPresenter {
 
   #renderBoard() {
     render(this.#pointComponent, this.#formContainer);
-    if (this.#points.every((point) => point.isArchive)) {
+    // if (this.#points.every((point) => point.isArchive)) {
+    //   this.#renderNoPoints();
+    //   return;
+    // }
+    const points = this.points;
+    const pointsCount = points.length;
+
+    if (pointsCount === 0) {
       this.#renderNoPoints();
       return;
     }
