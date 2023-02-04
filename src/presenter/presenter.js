@@ -1,5 +1,6 @@
 import TripEventsListView from '../view/trips-list-view.js';
 import NoTripView from '../view/no-trip-view.js';
+import NewPointButtonView from '../view/new-point-button-view.js';
 import SortView from '../view/sort-view.js';
 import NewPointPresenter from './new-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
@@ -12,6 +13,7 @@ export default class FormPresenter {
   #formContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #newPointButtonContainer = null;
 
   #points = [];
   #destinations = [];
@@ -20,21 +22,27 @@ export default class FormPresenter {
   #pointComponent = new TripEventsListView();
   #tripEventPresenter = new Map();
   #newPointPresenter = null;
+  #newPointButtonComponent = null;
   #noTripComponent = new NoTripView();
   #sortComponent = null;
   #currentSortType = SortType.PRICE;
   #filterType = FilterType.FUTURE;
 
 
-  constructor({formContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({formContainer, newPointButtonContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#formContainer = formContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#newPointButtonContainer = newPointButtonContainer,
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
+    });
+
+    this.#newPointButtonComponent = new NewPointButtonView({
+      onClick: this.#handleNewPointButtonClick,
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -55,11 +63,21 @@ export default class FormPresenter {
     this.#points = [...this.#pointsModel.points];
   }
 
-
-  createPoint(point, destinations, offers) {
+  createPoint() {
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init(point, destinations, offers);
+    this.#newPointPresenter.init(this.#points, this.#destinations, this.#offers);
   }
+
+
+  #handleNewPointFormClose = () => {
+    this.#newPointButtonComponent.element.disabled = false;
+  };
+
+  #handleNewPointButtonClick = () => {
+    this.#newPointButtonComponent.element.disabled = true;
+    this.createPoint();
+  };
+
 
   #handleModeChange = () => {
     this.#newPointPresenter.destroy();
@@ -170,5 +188,6 @@ export default class FormPresenter {
     }
     this.#renderSort();
     this.#renderPoints();
+    render(this.#newPointButtonComponent, this.#newPointButtonContainer);
   }
 }
