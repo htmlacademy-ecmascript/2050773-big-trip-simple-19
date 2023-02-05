@@ -45,8 +45,8 @@ export default class NewPointPresenter {
     if (this.#pointEditComponent === null) {
       return;
     }
-
     this.#handleDestroy();
+
 
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
