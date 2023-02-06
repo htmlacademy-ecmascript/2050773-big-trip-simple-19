@@ -1,4 +1,5 @@
 import {render, replace, remove} from '../framework/render.js';
+import {UserAction, UpdateType} from '../const.js';
 import EditTripView from '../view/edit-trip-view.js';
 import TripEventComponent from '../view/one-trip-view.js';
 
@@ -15,12 +16,14 @@ export default class TripEventPresenter {
   #destinations = null;
   #offers = null;
   #handleModeChange = null;
+  #handleDataChange = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor({tripListContainer, onModeChange}) {
+  constructor({tripListContainer, onDataChange, onModeChange}) {
     this.#tripListContainer = tripListContainer;
     this.#handleModeChange = onModeChange;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point, destinations, offers) {
@@ -44,6 +47,7 @@ export default class TripEventPresenter {
       offers: this.#offers,
       onFormSubmit: this.#handleFormSubmit,
       onRolldownClick: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevTripComponent === null || prevTripEditComponent === null) {
@@ -104,7 +108,21 @@ export default class TripEventPresenter {
     this.#replacePointToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+    this.#replaceFormToPoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
     this.#replaceFormToPoint();
   };
 }
