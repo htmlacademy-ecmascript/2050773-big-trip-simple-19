@@ -51,6 +51,19 @@ const sortByPrice = (waypointA, waypointB)=> waypointB.basePrice - waypointA.bas
 
 const sortByDay = (waypointA, waypointB)=>dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
 
+const getOffersByType = (point, pointCommon) => pointCommon.allOffers.find((offerTypes) => offerTypes.type === point.type).offers;
+
+const calculateTotalPrice = (point, pointCommon) => {
+  let price = point.basePrice;
+  const offersByType = getOffersByType(point, pointCommon);
+
+  point.selectedOffers.map((selectedOfferId) => {
+    const offerPrice = offersByType.find((offer) => offer.id === selectedOfferId).price;
+    price += offerPrice;
+  });
+  return price;
+};
+
 export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem,
-  createDestination, createDescription, filter, sortByTime, sortByPrice, sortByDay};
+  createDestination, createDescription, filter, sortByTime, sortByPrice, sortByDay, getOffersByType, calculateTotalPrice,};
 
