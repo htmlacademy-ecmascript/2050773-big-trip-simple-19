@@ -82,14 +82,14 @@ export default class FormPresenter {
     return offers;
   }
 
-  init() {
-    // this.#destinations = [...this.#pointsModel.destinations];
-    // this.#offers = [...this.#pointsModel.offers];
-    this.#renderBoard();
-  }
+  // init() {
+  //   this.#renderBoard();
+  // }
 
   #updatePoints() {
     this.#points = [...this.#pointsModel.points];
+    this.#offers = [...this.#pointsModel.offers];
+    this.#destinations = [...this.#pointsModel.destinations];
   }
 
   createPoint() {
@@ -195,6 +195,7 @@ export default class FormPresenter {
     this.#updatePoints();
 
     for (let i = 0; i < this.#points.length; i++) {
+      console.log(this.#destinations);
       this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
     }
   }

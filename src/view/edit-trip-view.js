@@ -11,42 +11,34 @@ const BLANK_POINT = {
   type: 'Bus'
 };
 
-const createOfferTemplate = (offers) =>
-  `<div class="event__available-offers">
+const createOfferTemplate = (offer) =>
+  `
   <div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
     <label class="event__offer-label" for="event-offer-luggage-1">
-      <span class="event__offer-title">${offers.title}</span>
+      <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price" pattern="^[0-9]+$">${offers.price}</span>
+      <span class="event__offer-price" pattern="^[0-9]+$">${offer.price}</span>
     </label>
   </div>`;
 
 
-const findOffersByID = (id, offers) => {
-  const offersArray = [];
-  if (id) {
-
-    for (let i = 0; i < id.length; i++){
-      for (let j = 0; j < offers.length; j++) {
-        if (offers[j].id === id[i]) {
-          offersArray.push(offers[j]);
-        }
-      }
+const findOffersByID = (type, offers) => {
+  for (let j = 0; j < offers.length; j++) {
+    if (offers[j].type === type) {
+      return offers[j];
     }
   }
-
-  return offersArray;
 };
 
-const createOffers = (offers) => offers.map((offer) => createOfferTemplate(offer)).join('');
+const createOffers = (offers) => `<div class="event__available-offers">${offers.map((offer) => createOfferTemplate(offer)).join('')}</div>`;
 
 const createFormCreationTemplate = (point, destinations, offers) => {
   const {dueDate, type, destination, offersIds, basePrice} = point;
   const date = humanizePointDueDate(dueDate);
   const destinationPictures = [];
 
-  const offersArraybyId = findOffersByID(offersIds, offers);
+  const offersByType = findOffersByID(type, offers).offers;
 
 
   for (let i = 0; i < destinations.length; i++) {
@@ -155,7 +147,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOffers(offersArraybyId)}
+            ${createOffers(offersByType)}
           </section>
 
           <section class="event__section  event__section--destination">

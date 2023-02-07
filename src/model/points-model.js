@@ -17,36 +17,55 @@ export default class PointsModel extends Observable {
     this.#pointsApiService = pointsApiService;
   }
 
-
   get points() {
-
-    return this.#points.map((point) => {
-      const offerByTypes = this.#offersByTypes.find((offer) => offer.type === point.type);
-      const destination = this.#destinations.find((direction) => direction.id === point.destination);
-      const offersByTypes = this.#offersByTypes;
-      const destinations = this.#destinations;
-
-
-      return {
-        ...point,
-        destination,
-        offerByTypes,
-        offersByTypes,
-        destinations
-      };
-    });
+    return this.#points;
   }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offersByTypes;
+  }
+
+
+  // get points() {
+
+  //   return this.#points.map((point) => {
+  //     const offerByTypes = this.#offersByTypes.find((offer) => offer.type === point.type);
+  //     const destination = this.#destinations.find((direction) => direction.id === point.destination);
+  //     const offersByTypes = this.#offersByTypes;
+  //     const destinations = this.#destinations;
+
+
+  //     return {
+  //       ...point,
+  //       destination,
+  //       offerByTypes,
+  //       offersByTypes,
+  //       destinations
+  //     };
+  //   });
+  // }
 
   async init() {
     try {
       const points = await this.#pointsApiService.points;
       const allOffers = await this.#pointsApiService.offers;
       const destinations = await this.#pointsApiService.destinations;
+      this.#destinations = destinations;
       this.#points = points.map(this.#adaptToClient);
       this.#offersByTypes = allOffers;
-      this.#destinations = destinations;
+    } catch(err) {
+
+    }
+    try {
+
     } catch(err) {
       this.#points = [];
+      this.#offersByTypes = [];
+      this.#destinations = [];
     }
 
     this._notify(UpdateType.INIT);
@@ -111,4 +130,3 @@ export default class PointsModel extends Observable {
     return adaptedPoint;
   }
 }
-

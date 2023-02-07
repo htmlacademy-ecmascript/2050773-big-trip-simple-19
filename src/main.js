@@ -46,7 +46,9 @@ function handleNewPointButtonClick() {
   newPointButtonView.setDisable();
 }
 
-filterPresenter.init();
-formPresenter.init();
-pointsModel.init();
+pointsModel.init().finally(() => {
+  filterPresenter.init();
+  //formPresenter.init();
+});
+
 
