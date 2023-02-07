@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {humanizePointDueDate, createDestination, createDescription} from '../utils.js';
+import {createDestination, createDescription, createPictures} from '../utils.js';
+import dayjs from 'dayjs';
 
 const BLANK_POINT = {
   basePrice: 0,
@@ -23,6 +24,9 @@ const createOfferTemplate = (offer) =>
   </div>`;
 
 
+const createPicturesTemplate = (picture) => ` <img class="event__photo" src="${picture.src}">`;
+
+
 const findOffersByID = (type, offers) => {
   for (let j = 0; j < offers.length; j++) {
     if (offers[j].type === type) {
@@ -33,18 +37,16 @@ const findOffersByID = (type, offers) => {
 
 const createOffers = (offers) => `<div class="event__available-offers">${offers.map((offer) => createOfferTemplate(offer)).join('')}</div>`;
 
+const createPointPictures = (pointPictures) => `<div class="event__photos-tape">${pointPictures.map((picture) => createPicturesTemplate(picture)).join('')}</div>`;
+
+
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dueDate, type, destination, offersIds, basePrice} = point;
-  const date = humanizePointDueDate(dueDate);
-  const destinationPictures = [];
+  const {dateFrom, dateTo, destId, type, basePrice} = point;
+
 
   const offersByType = findOffersByID(type, offers).offers;
 
-
-  for (let i = 0; i < destinations.length; i++) {
-    destinationPictures.push(destinations[i].pictures[0].src);
-  }
-
+  const pointPictures = createPictures(destId, destinations);
 
   return `<ul class="trip-events__list">
     <li class="trip-events__item">
@@ -113,7 +115,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destination, destinations)}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destId, destinations)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -123,10 +125,10 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${date} 00:00">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('HH:mm')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${date}  00:00">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('HH:mm')}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -152,15 +154,11 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description"> ${createDescription(destination, destinations)}</p>
+            <p class="event__destination-description"> ${createDescription(destId, destinations)}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                <img class="event__photo" src="${destinationPictures[0]}">
-                <img class="event__photo" src="${destinationPictures[1]}">
-                <img class="event__photo" src="${destinationPictures[2]}">
-                <img class="event__photo" src="${destinationPictures[3]}">
-              </div>
+              ${createPointPictures(pointPictures)}
             </div>
           </section>
         </section>

@@ -35,6 +35,15 @@ const createDescription = (id, destinations) => {
   }
 };
 
+const createPictures = (id, destinations) => {
+  for (let i = 0; i < destinations.length; i++) {
+
+    if (destinations[i].id === id) {
+      return destinations[i].pictures;
+    }
+  }
+};
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => points.slice(),
   [FilterType.FUTURE]: (points) => points.filter((point) => Date.now() <= new Date(point.dateTo).getTime()),
@@ -65,5 +74,5 @@ const calculateTotalPrice = (point, pointCommon) => {
 };
 
 export {getRandomArrayElement, getRandomNumber, humanizePointDueDate, updateItem,
-  createDestination, createDescription, filter, sortByTime, sortByPrice, sortByDay, getOffersByType, calculateTotalPrice,};
+  createDestination, createDescription, createPictures, filter, sortByTime, sortByPrice, sortByDay, getOffersByType, calculateTotalPrice,};
 
