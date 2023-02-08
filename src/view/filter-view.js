@@ -12,7 +12,7 @@ function createFiltersTemplate(filter, currentFilterType) {
 }
 
 function createTemplate(filterItems, currentFilterType) {
-  const filtersTemplate = filterItems.map((filter) => createFiltersTemplate(filter, currentFilterType));
+  const filtersTemplate = filterItems.map((filter) => createFiltersTemplate(filter, currentFilterType)).join('');
 
   return (
     `<form class="trip-filters" action="#" method="get">

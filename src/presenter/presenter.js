@@ -7,7 +7,8 @@ import {render, RenderPosition, remove} from '../framework/render.js';
 import TripEventPresenter from './trip-event-presenter.js';
 import {UpdateType, UserAction, FilterType, SortType} from '../const.js';
 import {filter, sortByTime, sortByPrice, sortByDay} from '../utils.js';
-
+import LoadingView from '../view/loading-view.js';
+import ErrorLoadingView from '../view/error-loading-view.js';
 
 export default class FormPresenter {
   #formContainer = null;
@@ -28,10 +29,12 @@ export default class FormPresenter {
   #newPointButtonComponent = null;
   #noTripComponent = null;
   #sortComponent = null;
+  #loadingComponent = new LoadingView();
+  #ErrorLoadingView = new ErrorLoadingView();
   #currentSortType = SortType.PRICE;
-
   #filterType = FilterType.EVERYTHING;
-
+  #isLoading = true;
+  #isErrorLoading = false;
 
   constructor({formContainer, newPointButtonContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#formContainer = formContainer;
@@ -69,19 +72,24 @@ export default class FormPresenter {
     return filteredPoints.sort(sortByDay);
   }
 
-  init() {
-    this.#destinations = [...this.#pointsModel.destinations];
-    this.#offers = [...this.#pointsModel.offers];
-    this.#renderBoard();
+  get destinations() {
+    const destinations = [...this.#pointsModel.destinations];
+    return destinations;
   }
+
+  get offers() {
+    const offers = [...this.#pointsModel.offers];
+    return offers;
+  }
+
 
   #updatePoints() {
     this.#points = [...this.#pointsModel.points];
+    this.#offers = [...this.#pointsModel.offers];
+    this.#destinations = [...this.#pointsModel.destinations];
   }
 
   createPoint() {
-    // this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    // this.#newPointPresenter.init(this.#points[0], this.#destinations, this.#offers);
 
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -133,6 +141,16 @@ export default class FormPresenter {
         this.#clearBoard();
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
+      case UpdateType.ERROR_LOADING:
+        this.#isErrorLoading = true;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -155,7 +173,6 @@ export default class FormPresenter {
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-
   #renderPoint(point, destinations, offers) {
 
     const tripEventPresenter = new TripEventPresenter({
@@ -170,12 +187,18 @@ export default class FormPresenter {
 
   #renderPoints() {
     this.#updatePoints();
-
-    for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+    for (let i = 0; i < this.points.length; i++) {
+      this.#renderPoint(this.points[i], this.#destinations, this.#offers);
     }
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderErrorLoading() {
+    render(this.#ErrorLoadingView, this.#formContainer);
+  }
 
   #renderNoPoints() {
     this.#noTripComponent = new NoTripView({
@@ -192,11 +215,21 @@ export default class FormPresenter {
     this.#tripEventPresenter.clear();
     remove(this.#sortComponent);
     remove(this.#noTripComponent);
-
+    remove(this.#loadingComponent);
   }
 
   #renderBoard() {
+    if (this.#isErrorLoading) {
+      this.#renderErrorLoading();
+      return;
+    }
+
     render(this.#pointComponent, this.#formContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     const points = this.points;
     const pointsCount = points.length;
@@ -207,6 +240,7 @@ export default class FormPresenter {
     }
     this.#renderSort();
     this.#renderPoints();
+
     render(this.#newPointButtonComponent, this.#newPointButtonContainer);
   }
 }

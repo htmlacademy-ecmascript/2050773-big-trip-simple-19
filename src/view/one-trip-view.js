@@ -1,24 +1,42 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDueDate,createDestination} from '../utils.js';
+import dayjs from 'dayjs';
+import {createDestination} from '../utils.js';
 
+const findOffersByID = (type, offers) => {
+  for (let j = 0; j < offers.length; j++) {
+    if (offers[j].type === type) {
+      return offers[j];
+    }
+  }
+};
 
-const createTripEventTemplate = (point, destinations) => {
-  const {dueDate, destination, type, basePrice} = point;
-  const date = humanizePointDueDate(dueDate);
+const createTripEventTemplate = (point, destinations, offers) => {
+  const {dateFrom, dateTo, destinationId, type, basePrice} = point;
+  const offerAdditionals = findOffersByID(type, offers);
+  let offerAdditional = [];
 
+  if (offerAdditionals.offers[0]) {
+    offerAdditional = offerAdditionals.offers[0];
+  }
+  else {
+    offerAdditional.title = 'No additional offers';
+    offerAdditional.price = '0';
+  }
 
   return `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date">${date}</time>
+      <time class="event__date" datetime="${dayjs(dateFrom).format('YYYY-MM-DD')}">${dayjs(dateFrom).format('MMM D')}</time>
+
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${createDestination(destination, destinations)}</h3>
+        <h3 class="event__title">${type} ${createDestination(destinationId, destinations)}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
-            &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateFrom).format('HH:mm')}</time>
+          &mdash;
+          <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateTo).format('HH:mm')}</time>
+        </p>
           </p>
         </div>
         <p class="event__price">
@@ -26,10 +44,10 @@ const createTripEventTemplate = (point, destinations) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">Order Uber</span>
+        <li class="event__offer">
+            <span class="event__offer-title">${offerAdditional.title}</span>
             &plus;&euro;&nbsp;
-            <span class="event__offer-price">20</span>
+            <span class="event__offer-price">${offerAdditional.price}</span>
           </li>
         </ul>
         <button class="event__rollup-btn" type="button">
