@@ -100,7 +100,7 @@ export default class PointsModel extends Observable {
       basePrice: point['base_price'],
       dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
       dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
-      destId: point['destination'],
+      destinationId: point['destination'],
       selectedOffers: point['offers'],
     };
 

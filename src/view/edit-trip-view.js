@@ -41,12 +41,12 @@ const createPointPictures = (pointPictures) => `<div class="event__photos-tape">
 
 
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dateFrom, dateTo, destId, type, basePrice} = point;
+  const {dateFrom, dateTo, destinationId, type, basePrice} = point;
 
 
   const offersByType = findOffersByID(type, offers).offers;
 
-  const pointPictures = createPictures(destId, destinations);
+  const pointPictures = createPictures(destinationId, destinations);
 
   return `<ul class="trip-events__list">
     <li class="trip-events__item">
@@ -115,7 +115,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destId, destinations)}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destinationId, destinations)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -154,7 +154,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description"> ${createDescription(destId, destinations)}</p>
+            <p class="event__destination-description"> ${createDescription(destinationId, destinations)}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
@@ -210,7 +210,7 @@ export default class EditPointView extends AbstractStatefulView {
     const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
     const newDestinationId = newDestination ? newDestination.id : -1;
     this.updateElement({
-      destId: newDestinationId,
+      destinationId: newDestinationId,
     });
   };
 
