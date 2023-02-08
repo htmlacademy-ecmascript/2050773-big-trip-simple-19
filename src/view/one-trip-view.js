@@ -12,8 +12,16 @@ const findOffersByID = (type, offers) => {
 
 const createTripEventTemplate = (point, destinations, offers) => {
   const {dateFrom, dateTo, destId, type, basePrice} = point;
-  let OfferAdditional = findOffersByID(type, offers);
-  OfferAdditional = OfferAdditional.offers[0];
+  const offerAdditionals = findOffersByID(type, offers);
+  let offerAdditional = [];
+
+  if (offerAdditionals.offers[0]) {
+    offerAdditional = offerAdditionals.offers[0];
+  }
+  else {
+    offerAdditional.title = 'No additional offers';
+    offerAdditional.price = '0';
+  }
 
   return `<li class="trip-events__item">
       <div class="event">
@@ -36,10 +44,10 @@ const createTripEventTemplate = (point, destinations, offers) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">${OfferAdditional.title}</span>
+        <li class="event__offer">
+            <span class="event__offer-title">${offerAdditional.title}</span>
             &plus;&euro;&nbsp;
-            <span class="event__offer-price">${OfferAdditional.price}</span>
+            <span class="event__offer-price">${offerAdditional.price}</span>
           </li>
         </ul>
         <button class="event__rollup-btn" type="button">

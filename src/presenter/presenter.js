@@ -82,9 +82,6 @@ export default class FormPresenter {
     return offers;
   }
 
-  // init() {
-  //   this.#renderBoard();
-  // }
 
   #updatePoints() {
     this.#points = [...this.#pointsModel.points];
@@ -93,8 +90,6 @@ export default class FormPresenter {
   }
 
   createPoint() {
-    // this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    // this.#newPointPresenter.init(this.#points[0], this.#destinations, this.#offers);
 
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -177,7 +172,6 @@ export default class FormPresenter {
 
     render(this.#sortComponent, this.#pointComponent.element, RenderPosition.AFTERBEGIN);
   }
-
 
   #renderPoint(point, destinations, offers) {
 

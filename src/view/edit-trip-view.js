@@ -231,7 +231,6 @@ export default class EditPointView extends AbstractStatefulView {
   #editRolldownHandler = (evt) => {
     evt.preventDefault();
     const currentPoint = EditPointView.parseStateToPoint(this._state);
-    this.#handleRolldownClick(currentPoint);
     this.#handleFormSubmit(currentPoint);
   };
 
