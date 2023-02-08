@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
 import {FilterType} from './const.js';
 
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
+const filter = {
+  [FilterType.EVERYTHING]: (points) => points.slice(),
+  [FilterType.FUTURE]: (points) => points.filter((point) => Date.now() <= new Date(point.dateTo).getTime()),
+};
+
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 const createDestination = (id, destinations) => {
   for (let i = 0; i < destinations.length; i++) {
@@ -32,21 +35,16 @@ const createPictures = (id, destinations) => {
   }
 };
 
-const filter = {
-  [FilterType.EVERYTHING]: (points) => points.slice(),
-  [FilterType.FUTURE]: (points) => points.filter((point) => Date.now() <= new Date(point.dateTo).getTime()),
-};
-
-const sortByTime = (waypointA, waypointB)=>{
+const sortByTime = (waypointA, waypointB) => {
   const durationA = dayjs(waypointA.dateTo).diff(dayjs(waypointA.dateFrom));
   const durationB = dayjs(waypointB.dateTo).diff(dayjs(waypointB.dateFrom));
   return durationB - durationA;
 };
 
-const sortByPrice = (waypointA, waypointB)=> waypointB.basePrice - waypointA.basePrice;
+const sortByPrice = (waypointA, waypointB) => waypointB.basePrice - waypointA.basePrice;
 
 
-const sortByDay = (waypointA, waypointB)=>dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
+const sortByDay = (waypointA, waypointB) => dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
 
 const getOffersByType = (point, pointCommon) => pointCommon.allOffers.find((offerTypes) => offerTypes.type === point.type).offers;
 
