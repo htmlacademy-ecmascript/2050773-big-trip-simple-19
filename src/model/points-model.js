@@ -1,13 +1,9 @@
-// import {getRandomPoint, DESTINATIONS, OFFERS} from '../mock/point.js';
 import Observable from '../framework/observable.js';
 import {UpdateType} from '../const.js';
 
 
-// const WAYPOINT_COUNT = 5;
-
 export default class PointsModel extends Observable {
   #pointsApiService = null;
-  // #points = Array.from({length: WAYPOINT_COUNT}, getRandomPoint);
   #points = [];
   #destinations = [];
   #offersByTypes = [];
@@ -28,26 +24,6 @@ export default class PointsModel extends Observable {
   get offers() {
     return this.#offersByTypes;
   }
-
-
-  // get points() {
-
-  //   return this.#points.map((point) => {
-  //     const offerByTypes = this.#offersByTypes.find((offer) => offer.type === point.type);
-  //     const destination = this.#destinations.find((direction) => direction.id === point.destination);
-  //     const offersByTypes = this.#offersByTypes;
-  //     const destinations = this.#destinations;
-
-
-  //     return {
-  //       ...point,
-  //       destination,
-  //       offerByTypes,
-  //       offersByTypes,
-  //       destinations
-  //     };
-  //   });
-  // }
 
   async init() {
     try {
@@ -107,7 +83,7 @@ export default class PointsModel extends Observable {
     }
 
     try {
-      await this.#pointsApiService.deletePoiny(update);
+      await this.#pointsApiService.deletePoint(update);
       this.#points = [
         ...this.#points.slice(0, index),
         ...this.#points.slice(index + 1),

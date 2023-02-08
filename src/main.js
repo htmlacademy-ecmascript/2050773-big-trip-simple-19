@@ -48,7 +48,6 @@ function handleNewPointButtonClick() {
 
 pointsModel.init().finally(() => {
   filterPresenter.init();
-  //formPresenter.init();
 });
 
 

@@ -193,10 +193,9 @@ export default class FormPresenter {
 
   #renderPoints() {
     this.#updatePoints();
-
-    for (let i = 0; i < this.#points.length; i++) {
+    for (let i = 0; i < this.points.length; i++) {
       // console.log(this.#destinations);
-      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+      this.#renderPoint(this.points[i], this.#destinations, this.#offers);
     }
   }
 
@@ -248,6 +247,7 @@ export default class FormPresenter {
     }
     this.#renderSort();
     this.#renderPoints();
+
     render(this.#newPointButtonComponent, this.#newPointButtonContainer);
   }
 }
