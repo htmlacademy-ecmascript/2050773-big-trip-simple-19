@@ -11,7 +11,7 @@ const findOffersByID = (type, offers) => {
 };
 
 const createTripEventTemplate = (point, destinations, offers) => {
-  const {dateFrom, dateTo, destinationId, type, basePrice} = point;
+  const {dateFrom, dateTo, destId, type, basePrice} = point;
   const offerAdditionals = findOffersByID(type, offers);
   let offerAdditional = [];
 
@@ -30,7 +30,7 @@ const createTripEventTemplate = (point, destinations, offers) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${createDestination(destinationId, destinations)}</h3>
+        <h3 class="event__title">${type} ${createDestination(destId, destinations)}</h3>
         <div class="event__schedule">
           <p class="event__time">
           <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateFrom).format('HH:mm')}</time>

@@ -3,13 +3,13 @@ import {createDestination, createDescription, createPictures} from '../utils.js'
 import dayjs from 'dayjs';
 
 const BLANK_POINT = {
-  basePrice: 0,
+  basePrice: 110,
   dueDate: '2022-02-24',
-  dateFrom: '22022-02-24T12:55:56.845Z',
-  dateTo: '2022-02-24T11:22:13.375Z',
-  destination: -1,
-  offersIds: [],
-  type: 'Bus'
+  dateFrom: '2022-02-24T11:00:13.375Z',
+  dateTo: '2022-02-24T11:52:13.375Z',
+  destination: 1,
+  offers: [],
+  type: 'bus'
 };
 
 const createOfferTemplate = (offer) =>
@@ -27,26 +27,25 @@ const createOfferTemplate = (offer) =>
 const createPicturesTemplate = (picture) => ` <img class="event__photo" src="${picture.src}">`;
 
 
-const findOffersByID = (type, offers) => {
-  for (let j = 0; j < offers.length; j++) {
-    if (offers[j].type === type) {
-      return offers[j];
-    }
-  }
-};
-
 const createOffers = (offers) => `<div class="event__available-offers">${offers.map((offer) => createOfferTemplate(offer)).join('')}</div>`;
 
 const createPointPictures = (pointPictures) => `<div class="event__photos-tape">${pointPictures.map((picture) => createPicturesTemplate(picture)).join('')}</div>`;
 
 
 const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dateFrom, dateTo, destinationId, type, basePrice} = point;
+  const {dateFrom, dateTo, destination, type, basePrice} = point;
 
 
-  const offersByType = findOffersByID(type, offers).offers;
+  const getOffersForPoint = () => {for (const offer of offers) {
+    if (offer.type === point.type) {
+      return offer.offers;
+    }
+  }
+  };
 
-  const pointPictures = createPictures(destinationId, destinations);
+  const offersForPoint = getOffersForPoint();
+
+  const pointPictures = createPictures(destination, destinations);
 
   return `<ul class="trip-events__list">
     <li class="trip-events__item">
@@ -115,7 +114,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destinationId, destinations)}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${createDestination(destination, destinations)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -149,12 +148,12 @@ const createFormCreationTemplate = (point, destinations, offers) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOffers(offersByType)}
+            ${createOffers(offersForPoint)}
           </section>
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description"> ${createDescription(destinationId, destinations)}</p>
+            <p class="event__destination-description"> ${createDescription(destination, destinations)}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
@@ -208,9 +207,9 @@ export default class EditPointView extends AbstractStatefulView {
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
     const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
-    const newDestinationId = newDestination ? newDestination.id : -1;
+    const destination = newDestination ? newDestination.id : -1;
     this.updateElement({
-      destinationId: newDestinationId,
+      destination: destination,
     });
   };
 
@@ -218,7 +217,7 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offersIds: this._state.type === evt.target.value ? this._state.offers : []
+      offers: this._state.type === evt.target.value ? this._state.offers : []
     });
   };
 

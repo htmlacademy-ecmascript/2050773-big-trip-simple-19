@@ -61,6 +61,7 @@ export default class FormPresenter {
     this.#filterType = this.#filterModel.filter;
     const points = [...this.#pointsModel.points];
 
+
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -236,11 +237,11 @@ export default class FormPresenter {
 
     if (pointsCount === 0) {
       this.#renderNoPoints();
-      return;
     }
     this.#renderSort();
     this.#renderPoints();
 
     render(this.#newPointButtonComponent, this.#newPointButtonContainer);
+    this.#handleNewPointFormClose();
   }
 }

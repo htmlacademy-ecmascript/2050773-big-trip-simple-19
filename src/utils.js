@@ -35,6 +35,15 @@ const createPictures = (id, destinations) => {
   }
 };
 
+const findOffersByID = (type, offers) => {
+
+  for (let j = 0; j < offers.length; j++) {
+    if (offers[j].type === type) {
+      return offers[j];
+    }
+  }
+};
+
 const sortByTime = (waypointA, waypointB) => {
   const durationA = dayjs(waypointA.dateTo).diff(dayjs(waypointA.dateFrom));
   const durationB = dayjs(waypointB.dateTo).diff(dayjs(waypointB.dateFrom));
@@ -46,19 +55,7 @@ const sortByPrice = (waypointA, waypointB) => waypointB.basePrice - waypointA.ba
 
 const sortByDay = (waypointA, waypointB) => dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
 
-const getOffersByType = (point, pointCommon) => pointCommon.allOffers.find((offerTypes) => offerTypes.type === point.type).offers;
-
-const calculateTotalPrice = (point, pointCommon) => {
-  let price = point.basePrice;
-  const offersByType = getOffersByType(point, pointCommon);
-
-  point.selectedOffers.map((selectedOfferId) => {
-    const offerPrice = offersByType.find((offer) => offer.id === selectedOfferId).price;
-    price += offerPrice;
-  });
-  return price;
-};
 
 export {updateItem,
-  createDestination, createDescription, createPictures, filter, sortByTime, sortByPrice, sortByDay, getOffersByType, calculateTotalPrice,};
+  createDestination, createDescription, createPictures, filter, sortByTime, sortByPrice, sortByDay, findOffersByID};
 

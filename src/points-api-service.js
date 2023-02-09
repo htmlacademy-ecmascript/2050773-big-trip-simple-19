@@ -11,7 +11,6 @@ export default class PointApiService extends ApiService {
   get points() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
-
   }
 
   get destinations() {
@@ -65,15 +64,15 @@ export default class PointApiService extends ApiService {
       'base_price': point.basePrice,
       'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
       'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
-      'destination': point.destinationId,
-      'offers': point.selectedOffers,
+      'destination': point.destination,
+      'offers': point.offers,
     };
 
     delete adaptedPoint['basePrice'];
     delete adaptedPoint['dateFrom'];
     delete adaptedPoint['dateTo'];
-    delete adaptedPoint['destinationId'];
-    delete adaptedPoint['selectedOffers'];
+    delete adaptedPoint['destination'];
+    delete adaptedPoint['offers'];
 
     return adaptedPoint;
   }
