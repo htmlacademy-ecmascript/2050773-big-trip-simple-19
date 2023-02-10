@@ -95,6 +95,8 @@ export default class PointsModel extends Observable {
   }
 
   #adaptToClient(point) {
+    console.log(point);
+
     const adaptedPoint = {
       ...point,
       basePrice: point['base_price'],

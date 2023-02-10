@@ -4,12 +4,11 @@ import dayjs from 'dayjs';
 
 const BLANK_POINT = {
   basePrice: 0,
-  dueDate: '2022-02-24',
   dateFrom: '22022-02-24T12:55:56.845Z',
   dateTo: '2022-02-24T11:22:13.375Z',
   destination: -1,
-  offersIds: [],
-  type: 'Bus'
+  offers: [],
+  type: 'Bus',
 };
 
 const createOfferTemplate = (offer) =>

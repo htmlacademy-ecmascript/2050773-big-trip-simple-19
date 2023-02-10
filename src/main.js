@@ -4,6 +4,8 @@ import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './points-api-service.js';
+import { render } from './framework/render.js';
+
 
 const AUTHORIZATION = 'Basic hS2s45tgfr4567uhg1';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
@@ -30,27 +32,28 @@ const formPresenter = new FormPresenter({
   newPointButtonContainer: siteHeaderElement,
   pointsModel,
   filterModel,
-  onNewPointDestroy: handleNewPointFormClose
+  onNewPointDestroy: handleNewEventFormClose
 });
 
-const newPointButtonView = new NewPointButtonView ({
-  onClick: handleNewPointButtonClick
+const newEventButtonComponent = new NewPointButtonView({
+  onClick: handleNewEventButtonClick
 });
 
-function handleNewPointFormClose() {
-  newPointButtonView.setEnable();
+function handleNewEventFormClose() {
+  newEventButtonComponent.element.disabled = false;
 }
 
-function handleNewPointButtonClick() {
+function handleNewEventButtonClick() {
   formPresenter.createPoint();
-  newPointButtonView.setDisable();
+  newEventButtonComponent.element.disabled = true;
 }
 
-filterPresenter.init();
-pointsModel.init();
-
-// pointsModel.init().finally(() => {
-//   filterPresenter.init();
-// });
+Promise.all([
+  pointsModel.init()
+]).catch(() => {
+  newEventButtonComponent.element.disabled = true;
+}).finally(() => {
+  render(newEventButtonComponent, siteHeaderElement);
+});
 
 

@@ -268,8 +268,5 @@ export default class FormPresenter {
     }
     this.#renderSort();
     this.#renderPoints();
-
-    render(this.#newPointButtonComponent, this.#newPointButtonContainer);
-    this.#handleNewPointFormClose();
   }
 }
