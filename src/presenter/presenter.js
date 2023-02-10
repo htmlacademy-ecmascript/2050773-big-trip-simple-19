@@ -138,11 +138,11 @@ export default class FormPresenter {
         }
         break;
       case UserAction.ADD_POINT:
-        this.#tripEventPresenter.setSaving();
+        this.#newPointPresenter.setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
-          this.#tripEventPresenter.setAborting();
+          this.#newPointPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_POINT:

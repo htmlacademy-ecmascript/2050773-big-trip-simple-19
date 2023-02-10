@@ -38,7 +38,6 @@ export default class PointApiService extends ApiService {
   }
 
   async addPoint(point) {
-    console.log('add', point);
     const response = await this._load({
       url: 'points',
       method: Method.POST,
@@ -75,6 +74,7 @@ export default class PointApiService extends ApiService {
     delete adaptedPoint['dateTo'];
     delete adaptedPoint['destinationId'];
     delete adaptedPoint['selectedOffers'];
+    delete adaptedPoint['offersIds'];
 
     return adaptedPoint;
   }

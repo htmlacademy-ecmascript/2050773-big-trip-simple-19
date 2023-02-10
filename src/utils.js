@@ -9,7 +9,6 @@ const filter = {
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-
 const createDestination = (id, destinations) => {
   for (const destination of destinations) {
 
@@ -18,7 +17,6 @@ const createDestination = (id, destinations) => {
     }
   }
 };
-
 
 const createDescription = (id, destinations) => {
   for (const destination of destinations) {
@@ -54,7 +52,6 @@ const sortByTime = (waypointA, waypointB) => {
 };
 
 const sortByPrice = (waypointA, waypointB) => waypointB.basePrice - waypointA.basePrice;
-
 
 const sortByDay = (waypointA, waypointB) => dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
 

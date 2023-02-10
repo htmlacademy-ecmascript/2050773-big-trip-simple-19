@@ -12,7 +12,7 @@ const BLANK_POINT = {
 };
 
 const createOffersTemplate = (offers, checkedOffers, isDisabled) => {
-  if (offers.length > 0) {
+  if (offers !== []) {
     return (
       `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -30,16 +30,14 @@ const createOffersTemplate = (offers, checkedOffers, isDisabled) => {
   }
 };
 
-
 const createPicturesTemplate = (picture) => ` <img class="event__photo" src="${picture.src}">`;
 const createPointPictures = (pointPictures) => `<div class="event__photos-tape">${pointPictures.map((picture) => createPicturesTemplate(picture)).join('')}</div>`;
 
-const createFormCreationTemplate = (point, destinations, offers, isDisabled) => {
 
+const createFormCreationTemplate = (point, destinations, offers, isDisabled) => {
   const {dateFrom, dateTo, destinationId, type, basePrice, isSaving, isDeleting} = point;
 
   const offersByType = findOffersByID(type, offers).offers;
-
   const offersTemplate = createOffersTemplate(offersByType, offers, isDisabled);
 
   const pointPictures = createPictures(destinationId, destinations);
@@ -121,10 +119,10 @@ const createFormCreationTemplate = (point, destinations, offers, isDisabled) => 
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('MM/DD/YY	HH:mm')}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('MM/DD/YY HH:mm')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('MM/DD/YY	HH:mm')}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('MM/DD/YY HH:mm')}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -178,6 +176,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleRolldownClick = onRolldownClick;
     this.#handleDeleteClick = onDeleteClick;
 
+
     this._restoreHandlers();
   }
 
@@ -202,9 +201,12 @@ export default class EditPointView extends AbstractStatefulView {
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
     const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
-    const newDestinationId = newDestination ? newDestination.id : -1;
+    if (!newDestination) {
+      this.updateElement({...this._state});
+      return;
+    }
     this.updateElement({
-      destinationId: newDestinationId,
+      destinationId: newDestination.id,
     });
   };
 
@@ -227,6 +229,7 @@ export default class EditPointView extends AbstractStatefulView {
     const currentPoint = EditPointView.parseStateToPoint(this._state);
     this.#handleFormSubmit(currentPoint);
   };
+
 
   reset = (point) => {
     this.updateElement(

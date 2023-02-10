@@ -9,7 +9,6 @@ export default class NewPointPresenter {
   #point = null;
   #destinations = null;
   #offers = null;
-
   #pointEditComponent = null;
 
   constructor({pointListContainer, onDataChange, onDestroy}) {
@@ -46,7 +45,6 @@ export default class NewPointPresenter {
     }
     this.#handleDestroy();
 
-
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
 
@@ -71,7 +69,6 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent.shake(resetFormState);
   }
-
 
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
