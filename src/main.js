@@ -10,7 +10,7 @@ const AUTHORIZATION = 'Basic hS2s45tgfr4567uhg1';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 
-const tripEventsSection = document.querySelector('.trip-events');
+const tripEventsElement = document.querySelector('.trip-events');
 const siteHeaderElement = document.querySelector('.trip-main');
 
 
@@ -21,7 +21,7 @@ const pointsModel = new PointsModel({
 
 
 const formPresenter = new FormPresenter({
-  formContainer: tripEventsSection,
+  formContainer: tripEventsElement,
   newPointButtonContainer: siteHeaderElement,
   pointsModel,
   filterModel,

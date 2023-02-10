@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {FilterType} from './const.js';
 
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => points.slice(),
   [FilterType.FUTURE]: (points) => points.filter((point) => Date.now() <= new Date(point.dateTo).getTime()),
@@ -8,38 +9,40 @@ const filter = {
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-const createDestination = (id, destinations) => {
-  for (let i = 0; i < destinations.length; i++) {
 
-    if (destinations[i].id === id) {
-      return destinations[i].name;
+const createDestination = (id, destinations) => {
+  for (const destination of destinations) {
+
+    if (destination.id === id) {
+      return destination.name;
     }
   }
 };
 
-const createDescription = (id, destinations) => {
-  for (let i = 0; i < destinations.length; i++) {
 
-    if (destinations[i].id === id) {
-      return destinations[i].description;
+const createDescription = (id, destinations) => {
+  for (const destination of destinations) {
+
+    if (destination.id === id) {
+      return destination.description;
     }
   }
 };
 
 const createPictures = (id, destinations) => {
-  for (let i = 0; i < destinations.length; i++) {
+  for (const destination of destinations) {
 
-    if (destinations[i].id === id) {
-      return destinations[i].pictures;
+    if (destination.id === id) {
+      return destination.pictures;
     }
   }
 };
 
 const findOffersByID = (type, offers) => {
 
-  for (let j = 0; j < offers.length; j++) {
-    if (offers[j].type === type) {
-      return offers[j];
+  for (const offer of offers) {
+    if (offer.type === type) {
+      return offer;
     }
   }
 };

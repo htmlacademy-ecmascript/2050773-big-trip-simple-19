@@ -216,8 +216,8 @@ export default class FormPresenter {
 
   #renderPoints() {
     this.#updatePoints();
-    for (let i = 0; i < this.points.length; i++) {
-      this.#renderPoint(this.points[i], this.#destinations, this.#offers);
+    for (const point of this.points) {
+      this.#renderPoint(point, this.#destinations, this.#offers);
     }
   }
 
