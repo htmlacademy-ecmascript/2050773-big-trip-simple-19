@@ -1,6 +1,6 @@
 import {render, replace, remove} from '../framework/render.js';
 import {UserAction, UpdateType} from '../const.js';
-import EditTripView from '../view/edit-trip-view.js';
+import EditTripView from '../view/edit-point-view.js';
 import TripEventComponent from '../view/one-trip-view.js';
 
 const Mode = {
@@ -64,7 +64,8 @@ export default class TripEventPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#tripEditComponent, prevTripEditComponent);
+      replace(this.#tripComponent, prevTripEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevTripComponent);
@@ -81,6 +82,41 @@ export default class TripEventPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceFormToPoint();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#tripEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#tripEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#tripComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#tripEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#tripEditComponent.shake(resetFormState);
   }
 
 
