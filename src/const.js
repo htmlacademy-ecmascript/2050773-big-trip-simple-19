@@ -1,5 +1,7 @@
 const PHOTO_LINK = 'https://loremflickr.com/248/152?random=';
 
+const NO_SORT_TYPES = ['event', 'time', 'offers'];
+
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
@@ -26,4 +28,4 @@ const SortType = {
   OFFERS: 'offers'
 };
 
-export {UserAction, UpdateType, PHOTO_LINK, FilterType, SortType};
+export {UserAction, UpdateType, PHOTO_LINK, NO_SORT_TYPES, FilterType, SortType};

@@ -74,6 +74,7 @@ export default class PointApiService extends ApiService {
     delete adaptedPoint['dateTo'];
     delete adaptedPoint['destinationId'];
     delete adaptedPoint['selectedOffers'];
+    delete adaptedPoint['offersIds'];
 
     return adaptedPoint;
   }

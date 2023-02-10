@@ -1,5 +1,5 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import EditPointView from '../view/edit-trip-view.js';
+import EditPointView from '../view/edit-point-view.js';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class NewPointPresenter {
@@ -9,7 +9,6 @@ export default class NewPointPresenter {
   #point = null;
   #destinations = null;
   #offers = null;
-
   #pointEditComponent = null;
 
   constructor({pointListContainer, onDataChange, onDestroy}) {
@@ -46,11 +45,29 @@ export default class NewPointPresenter {
     }
     this.#handleDestroy();
 
-
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   }
 
   #handleFormSubmit = (point) => {

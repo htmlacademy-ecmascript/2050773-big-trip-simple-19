@@ -4,13 +4,14 @@ import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './points-api-service.js';
+import { render } from './framework/render.js';
+
 
 const AUTHORIZATION = 'Basic hS2s45tgfr4567uhg1';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
-
 const siteFiltersElement = document.querySelector('.trip-controls__filters');
-const tripEventsSection = document.querySelector('.trip-events');
+const tripEventsElement = document.querySelector('.trip-events');
 const siteHeaderElement = document.querySelector('.trip-main');
 
 
@@ -25,29 +26,35 @@ const filterPresenter = new FilterPresenter({
   pointsModel
 });
 
+
 const formPresenter = new FormPresenter({
-  formContainer: tripEventsSection,
+  formContainer: tripEventsElement,
   newPointButtonContainer: siteHeaderElement,
   pointsModel,
   filterModel,
-  onNewPointDestroy: handleNewPointFormClose
+  onNewPointDestroy: handleNewEventFormClose
 });
 
-const newPointButtonView = new NewPointButtonView ({
-  onClick: handleNewPointButtonClick
+const newEventButtonComponent = new NewPointButtonView({
+  onClick: handleNewEventButtonClick
 });
 
-function handleNewPointFormClose() {
-  newPointButtonView.setEnable();
+function handleNewEventFormClose() {
+  newEventButtonComponent.element.disabled = false;
 }
 
-function handleNewPointButtonClick() {
+function handleNewEventButtonClick() {
   formPresenter.createPoint();
-  newPointButtonView.setDisable();
+  newEventButtonComponent.element.disabled = true;
 }
 
-pointsModel.init().finally(() => {
-  filterPresenter.init();
+Promise.all([
+  pointsModel.init(),
+  filterPresenter.init()
+]).catch(() => {
+  newEventButtonComponent.element.disabled = true;
+}).finally(() => {
+  render(newEventButtonComponent, siteHeaderElement);
 });
 
 

@@ -1,14 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import {createDestination} from '../utils.js';
+import {createDestination, findOffersByID} from '../utils.js';
 
-const findOffersByID = (type, offers) => {
-  for (let j = 0; j < offers.length; j++) {
-    if (offers[j].type === type) {
-      return offers[j];
-    }
-  }
-};
 
 const createTripEventTemplate = (point, destinations, offers) => {
   const {dateFrom, dateTo, destinationId, type, basePrice} = point;
@@ -58,7 +51,7 @@ const createTripEventTemplate = (point, destinations, offers) => {
 };
 
 
-export default class TripEventComponent extends AbstractView {
+export default class OneTripView extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;

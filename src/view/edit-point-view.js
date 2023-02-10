@@ -1,50 +1,44 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {createDestination, createDescription, createPictures} from '../utils.js';
+import {createDestination, createDescription, createPictures, findOffersByID} from '../utils.js';
 import dayjs from 'dayjs';
 
 const BLANK_POINT = {
   basePrice: 0,
-  dueDate: '2022-02-24',
   dateFrom: '22022-02-24T12:55:56.845Z',
   dateTo: '2022-02-24T11:22:13.375Z',
   destination: -1,
-  offersIds: [],
-  type: 'Bus'
+  offers: [],
+  type: 'Bus',
 };
 
-const createOfferTemplate = (offer) =>
-  `
-  <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-    <label class="event__offer-label" for="event-offer-luggage-1">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price" pattern="^[0-9]+$">${offer.price}</span>
-    </label>
-  </div>`;
-
-
-const createPicturesTemplate = (picture) => ` <img class="event__photo" src="${picture.src}">`;
-
-
-const findOffersByID = (type, offers) => {
-  for (let j = 0; j < offers.length; j++) {
-    if (offers[j].type === type) {
-      return offers[j];
-    }
+const createOffersTemplate = (offers, checkedOffers, isDisabled) => {
+  if (offers !== []) {
+    return (
+      `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">${offers.map(({ id, title, price }) =>`
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" value=${id} ${checkedOffers.includes(id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+              <label class="event__offer-label" for="event-offer-${id}">
+                <span class="event__offer-title">${title}</span>
+                  &plus;&euro;&nbsp;
+                <span class="event__offer-price">${price}</span>
+              </label>
+          </div>`).join('')}
+        </div>
+      </section>`);
   }
 };
 
-const createOffers = (offers) => `<div class="event__available-offers">${offers.map((offer) => createOfferTemplate(offer)).join('')}</div>`;
-
+const createPicturesTemplate = (picture) => ` <img class="event__photo" src="${picture.src}">`;
 const createPointPictures = (pointPictures) => `<div class="event__photos-tape">${pointPictures.map((picture) => createPicturesTemplate(picture)).join('')}</div>`;
 
 
-const createFormCreationTemplate = (point, destinations, offers) => {
-  const {dateFrom, dateTo, destinationId, type, basePrice} = point;
-
+const createFormCreationTemplate = (point, destinations, offers, isDisabled) => {
+  const {dateFrom, dateTo, destinationId, type, basePrice, isSaving, isDeleting} = point;
 
   const offersByType = findOffersByID(type, offers).offers;
+  const offersTemplate = createOffersTemplate(offersByType, offers, isDisabled);
 
   const pointPictures = createPictures(destinationId, destinations);
 
@@ -125,10 +119,10 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('HH:mm')}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('MM/DD/YY HH:mm')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('HH:mm')}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('MM/DD/YY HH:mm')}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -139,8 +133,8 @@ const createFormCreationTemplate = (point, destinations, offers) => {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
           <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -148,8 +142,7 @@ const createFormCreationTemplate = (point, destinations, offers) => {
 
         <section class="event__details">
           <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOffers(offersByType)}
+            ${offersTemplate}
           </section>
 
           <section class="event__section  event__section--destination">
@@ -208,9 +201,12 @@ export default class EditPointView extends AbstractStatefulView {
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
     const newDestination = this.#destinations.find((item) => item.name === evt.target.value);
-    const newDestinationId = newDestination ? newDestination.id : -1;
+    if (!newDestination) {
+      this.updateElement({...this._state});
+      return;
+    }
     this.updateElement({
-      destinationId: newDestinationId,
+      destinationId: newDestination.id,
     });
   };
 
@@ -247,10 +243,17 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   static parsePointToState(point) {
-    return { ...point };
+    return { ...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false };
   }
 
   static parseStateToPoint(state) {
-    return { ...state };
+    const point = {...state};
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+    return point;
   }
 }
